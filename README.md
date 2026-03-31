@@ -1,36 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ORAX-Starter
 
-## Getting Started
+ORAX-Starter is the first premium edition of ORAX — a modern Next.js SaaS starter kit.
 
-First, run the development server:
+It provides everything you need to build a real SaaS product:
+authentication, dashboard, settings, and scalable architecture.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## ✨ What is ORAX-Starter?
+
+This version goes beyond the free landing page and gives you:
+
+- Full authentication system
+- Protected dashboard
+- User settings
+- Billing UI (ready to integrate)
+- Clean scalable architecture
+- RTL + LTR support
+- Modern UI system
+
+---
+
+## 🚀 Features
+
+- Next.js 16 (App Router)
+- TypeScript
+- Tailwind CSS
+- Dark / Light mode
+- Arabic / English (RTL support)
+- Authentication (login, register, reset password)
+- Protected routes
+- Dashboard layout
+- Settings page
+- Billing page (UI only)
+- Toast system
+- Clean component architecture
+
+---
+
+## 📦 Included
+
+- Landing page
+- Auth pages (login, register, forgot, reset)
+- Dashboard
+- Settings
+- Billing UI
+- API routes (auth + user)
+- i18n system
+- Theme system
+- Shared UI components
+
+---
+
+## ❌ Not Included
+
+- Payment integration (Stripe / Lemon Squeezy)
+- Webhooks
+- Subscription engine
+- Email production system
+- Advanced analytics
+
+---
+
+## 📁 Project Structure
+
+```txt
+src/
+  app/
+    (auth)/
+    (dashboard)/
+    api/
+  components/
+  lib/
+  config/
+  i18n/
+  messages/
+  types/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ⚙️ Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Install dependencies:
 
-## Learn More
+```bash
+pnpm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+Run development server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open:
 
-## Deploy on Vercel
+```
+http://localhost:3000
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠 Customization
+
+You can customize:
+
+- `src/config/site.ts` → name, pricing
+- `src/messages/*` → translations
+- `src/components/*` → UI
+- `src/app/*` → pages
+
+---
+
+## 💡 Use Cases
+
+- SaaS startup
+- MVP product
+- Admin dashboard
+- Internal tools
+- Client projects
+
+---
+
+## 🔄 Upgrade Path
+
+- ORAX-Free → landing only
+- ORAX-Starter → auth + dashboard
+- ORAX-Complete → full SaaS (payments + subscriptions)
+
+---
+
+## 📄 License
+
+This is a premium product.
+
+Redistribution or resale is not allowed.

@@ -65,7 +65,7 @@ export default function Navbar(): React.JSX.Element {
           </button>
 
           <Link
-            href="#pricing"
+            href="/login"
             className="nav-desktop-link"
             style={{
               fontSize: 14,
@@ -78,12 +78,13 @@ export default function Navbar(): React.JSX.Element {
             {t("nav.signin", l)}
           </Link>
 
-          <DemoToastLink
+          <Link
+            href="/register"
             className="btn btn-primary nav-desktop-cta"
             style={{ padding: "9px 20px", fontSize: 14 }}
           >
             {t("nav.cta", l)}
-          </DemoToastLink>
+          </Link>
 
           <button
             className="nav-toggle-btn hamburger-btn"
