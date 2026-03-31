@@ -15,7 +15,6 @@ import { Bricolage_Grotesque, DM_Sans, DM_Mono, Cairo } from "next/font/google";
 import { ToastProvider } from "@/components/providers/toast-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SessionProvider } from "@/components/providers/session-provider";
-import CustomCursor from "@/components/shared/custom-cursor";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -72,10 +71,7 @@ export default function RootLayout({
         <div id="cursor-ring" aria-hidden="true" />
         <SessionProvider>
           <ThemeProvider>
-            <ToastProvider>
-              <CustomCursor />
-              {children}
-            </ToastProvider>
+            <ToastProvider>{children}</ToastProvider>
           </ThemeProvider>
         </SessionProvider>
       </body>

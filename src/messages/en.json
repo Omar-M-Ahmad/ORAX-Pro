@@ -11,10 +11,12 @@
   "notFound.back": "Go back",
   "toast.comingSoon": "This feature is coming soon.",
 
+  "nav.dashboard": "Dashboard",
   "nav.features": "Features",
   "nav.pricing": "Pricing",
   "nav.faq": "FAQ",
   "nav.signin": "Sign in",
+  "nav.signout": "Sign out",
   "nav.cta": "Get Started",
   "nav.langLabel": "عربي",
   "nav.langAriaEn": "Switch to Arabic",

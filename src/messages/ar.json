@@ -11,10 +11,12 @@
   "notFound.back": "رجوع",
   "toast.comingSoon": "هذه الميزة ستكون متاحة قريبًا.",
 
+  "nav.dashboard": "لوحة التحكم",
   "nav.features": "المميزات",
   "nav.pricing": "الأسعار",
   "nav.faq": "الأسئلة",
   "nav.signin": "تسجيل الدخول",
+  "nav.signout": "تسجيل الخروج",
   "nav.cta": "ابدأ الآن",
   "nav.langLabel": "EN",
   "nav.langAriaEn": "Switch to English",

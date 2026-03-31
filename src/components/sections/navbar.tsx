@@ -1,17 +1,17 @@
 /**
  * @file components/sections/navbar.tsx
- * @description ORAX public navbar for the free version.
+ * @description ORAX Starter navbar with auth-aware actions.
  */
 
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Moon, Sun, Menu, X, LayoutDashboard, LogOut } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 
 import { useTheme } from "@/components/providers/theme-provider";
 import { t } from "@/i18n";
-import DemoToastLink from "@/components/shared/demo-toast-link";
 
 const navLinks = [
   { tKey: "nav.features" as const, href: "#features" },
@@ -21,16 +21,23 @@ const navLinks = [
 
 export default function Navbar(): React.JSX.Element {
   const { theme, locale, mounted, toggleTheme, toggleLocale } = useTheme();
+  const { data: session, status } = useSession();
   const l = mounted ? locale : "en";
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const isLoggedIn = status === "authenticated" && !!session?.user;
 
   useEffect(() => {
     const onScroll = (): void => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const handleSignOut = async (): Promise<void> => {
+    await signOut({ callbackUrl: "/" });
+  };
 
   return (
     <nav
@@ -39,7 +46,7 @@ export default function Navbar(): React.JSX.Element {
       aria-label="Main navigation"
     >
       <div className="nav-inner">
-        <Link href="/" className="nav-logo">
+        <Link href="/" className="nav-logo" onClick={() => setMenuOpen(false)}>
           <div className="nav-logo-dot" aria-hidden="true" />
           ORAX
         </Link>
@@ -64,27 +71,60 @@ export default function Navbar(): React.JSX.Element {
             {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
           </button>
 
-          <Link
-            href="/login"
-            className="nav-desktop-link"
-            style={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: "var(--text-2)",
-              padding: "6px 10px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {t("nav.signin", l)}
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="nav-desktop-link"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "var(--text-2)",
+                  padding: "6px 10px",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <LayoutDashboard size={14} />
+                {t("nav.dashboard", l)}
+              </Link>
 
-          <Link
-            href="/register"
-            className="btn btn-primary nav-desktop-cta"
-            style={{ padding: "9px 20px", fontSize: 14 }}
-          >
-            {t("nav.cta", l)}
-          </Link>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="btn btn-primary nav-desktop-cta"
+                style={{ padding: "9px 20px", fontSize: 14 }}
+              >
+                {t("nav.signout", l)}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="nav-desktop-link"
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "var(--text-2)",
+                  padding: "6px 10px",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {t("nav.signin", l)}
+              </Link>
+
+              <Link
+                href="/register"
+                className="btn btn-primary nav-desktop-cta"
+                style={{ padding: "9px 20px", fontSize: 14 }}
+              >
+                {t("nav.cta", l)}
+              </Link>
+            </>
+          )}
 
           <button
             className="nav-toggle-btn hamburger-btn"
@@ -140,12 +180,53 @@ export default function Navbar(): React.JSX.Element {
             </button>
           </div>
 
-          <DemoToastLink
-            className="btn btn-glow"
-            style={{ marginTop: 8, justifyContent: "center" }}
-          >
-            {t("nav.cta", l)}
-          </DemoToastLink>
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="btn btn-ghost"
+                style={{
+                  marginTop: 8,
+                  justifyContent: "center",
+                  gap: 8,
+                }}
+                onClick={() => setMenuOpen(false)}
+              >
+                <LayoutDashboard size={14} />
+                {t("nav.dashboard", l)}
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="btn btn-glow"
+                style={{ marginTop: 8, justifyContent: "center", gap: 8 }}
+              >
+                <LogOut size={14} />
+                {t("nav.signout", l)}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="btn btn-ghost"
+                style={{ marginTop: 8, justifyContent: "center" }}
+                onClick={() => setMenuOpen(false)}
+              >
+                {t("nav.signin", l)}
+              </Link>
+
+              <Link
+                href="/register"
+                className="btn btn-glow"
+                style={{ marginTop: 8, justifyContent: "center" }}
+                onClick={() => setMenuOpen(false)}
+              >
+                {t("nav.cta", l)}
+              </Link>
+            </>
+          )}
         </div>
       )}
 

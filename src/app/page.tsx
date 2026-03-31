@@ -15,12 +15,14 @@ import Pricing from "@/components/sections/pricing";
 import FAQ from "@/components/sections/faq";
 import FinalCTA from "@/components/sections/final-cta";
 import Footer from "@/components/sections/footer";
+import CustomCursor from "@/components/shared/custom-cursor";
 
 export default function HomePage(): React.JSX.Element {
   return (
     <>
       <ScrollUI />
       <Navbar />
+      <CustomCursor />
       <main>
         <HeroSection />
         <LogosTicker />
