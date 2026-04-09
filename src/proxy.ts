@@ -1,45 +1,55 @@
 /**
  * @file src/proxy.ts
- * @description Next.js 16 proxy.
- * Protects dashboard routes and redirects based on auth state.
+ * @description Proxy file for ORAX locale routes.
  */
 
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
+const PUBLIC_FILE = /\.(.*)$/;
+const SUPPORTED_LOCALES = ["en", "ar"] as const;
+const DEFAULT_LOCALE = "en";
+const LOCALE_COOKIE_NAME = "orax-locale";
 
-export default auth((req: NextRequest & { auth?: unknown }) => {
-  const isLoggedIn = !!req.auth;
-  const pathname = req.nextUrl.pathname;
+type Locale = (typeof SUPPORTED_LOCALES)[number];
 
-  const isProtected =
-    pathname.startsWith("/dashboard") ||
-    pathname.startsWith("/settings") ||
-    pathname.startsWith("/billing");
+function isSupportedLocale(value: string | undefined): value is Locale {
+  return value === "en" || value === "ar";
+}
 
-  const isAuthPage =
-    pathname.startsWith("/login") || pathname.startsWith("/register");
+function getLocaleFromCookie(request: NextRequest): Locale {
+  const cookieValue = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
 
-  if (isProtected && !isLoggedIn) {
-    const loginUrl = new URL("/login", req.nextUrl.origin);
-    loginUrl.searchParams.set("callbackUrl", req.nextUrl.href);
-    return NextResponse.redirect(loginUrl);
+  if (isSupportedLocale(cookieValue)) {
+    return cookieValue;
   }
 
-  if (isAuthPage && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin));
+  return DEFAULT_LOCALE;
+}
+
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/favicon.ico") ||
+    PUBLIC_FILE.test(pathname)
+  ) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
-});
+  const hasLocale = SUPPORTED_LOCALES.some(
+    (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
+  );
 
-export const config = {
-  matcher: [
-    "/dashboard/:path*",
-    "/settings/:path*",
-    "/billing/:path*",
-    "/login",
-    "/register",
-  ],
-};
+  if (hasLocale) {
+    return NextResponse.next();
+  }
+
+  const locale = getLocaleFromCookie(request);
+
+  const url = request.nextUrl.clone();
+  url.pathname = `/${locale}${pathname}`;
+
+  return NextResponse.redirect(url);
+}

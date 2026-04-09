@@ -1,15 +1,18 @@
 /**
  * @file src/config/site.ts
- * @description Site-wide configuration for ORAX.
+ * @description Central SEO and site configuration for ORAX.
  */
 
 export const siteConfig = {
   name: "ORAX",
-  description: "Premium Next.js SaaS Starter Kit with RTL support.",
-  url: "http://localhost:3000",
-  pricing: {
-    starter: 39,
-    pro: 99,
-    complete: 179,
+  title: "ORAX - Arabic Ready SaaS Starter System",
+  description:
+    "ORAX is a modern SaaS starter system with real RTL support, bilingual foundation (Arabic + English), and clean architecture.for building scalable products.",
+  url: "http://localhost:3000/", // "https://orax-starter.vercel.app",
+  ogImage: "/og-image.png",
+  links: {
+    twitter: "https://x.com/omar_m_ahmad",
+    linkedin: "https://www.linkedin.com/in/omar-mahmoud-ahmad",
+    github: "https://github.com/Omar-M-Ahmad",
   },
-};
+} as const;

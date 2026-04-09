@@ -1,15 +1,14 @@
 /**
  * @file components/sections/navbar.tsx
- * @description ORAX Starter navbar with auth-aware actions.
+ * @description ORAX public navbar for the free version.
  */
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { ExternalLink, Menu, Moon, Sun, X } from "lucide-react";
 import Link from "next/link";
-import { Moon, Sun, Menu, X, LayoutDashboard, LogOut } from "lucide-react";
-import { useSession, signOut } from "next-auth/react";
-
+import { useEffect, useState } from "react";
+import { useLocale } from "@/components/providers/locale-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { t } from "@/i18n";
 
@@ -20,24 +19,24 @@ const navLinks = [
 ];
 
 export default function Navbar(): React.JSX.Element {
-  const { theme, locale, mounted, toggleTheme, toggleLocale } = useTheme();
-  const { data: session, status } = useSession();
-  const l = mounted ? locale : "en";
+  const { theme, toggleTheme } = useTheme();
+
+  const { locale, setLocale } = useLocale();
+  const l = locale;
+
+  const toggleLocale = () => {
+    const nextLocale = locale === "en" ? "ar" : "en";
+    setLocale(nextLocale);
+  };
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const isLoggedIn = status === "authenticated" && !!session?.user;
 
   useEffect(() => {
     const onScroll = (): void => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const handleSignOut = async (): Promise<void> => {
-    await signOut({ callbackUrl: "/" });
-  };
 
   return (
     <nav
@@ -51,7 +50,7 @@ export default function Navbar(): React.JSX.Element {
           ORAX
         </Link>
 
-        <ul className="nav-links" role="list">
+        <ul className="nav-links">
           {navLinks.map(({ tKey, href }) => (
             <li key={tKey}>
               <a href={href}>{t(tKey, l)}</a>
@@ -71,60 +70,14 @@ export default function Navbar(): React.JSX.Element {
             {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
           </button>
 
-          {isLoggedIn ? (
-            <>
-              <Link
-                href="/dashboard"
-                className="nav-desktop-link"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: "var(--text-2)",
-                  padding: "6px 10px",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <LayoutDashboard size={14} />
-                {t("nav.dashboard", l)}
-              </Link>
-
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="btn btn-primary nav-desktop-cta"
-                style={{ padding: "9px 20px", fontSize: 14 }}
-              >
-                {t("nav.signout", l)}
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="nav-desktop-link"
-                style={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: "var(--text-2)",
-                  padding: "6px 10px",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {t("nav.signin", l)}
-              </Link>
-
-              <Link
-                href="/register"
-                className="btn btn-primary nav-desktop-cta"
-                style={{ padding: "9px 20px", fontSize: 14 }}
-              >
-                {t("nav.cta", l)}
-              </Link>
-            </>
-          )}
+          <Link
+            href="/login"
+            className="btn btn-primary nav-desktop-cta"
+            style={{ padding: "9px 20px", fontSize: 14 }}
+            aria-label="Buy ORAX"
+          >
+            {t("nav.cta", l)}
+          </Link>
 
           <button
             className="nav-toggle-btn hamburger-btn"
@@ -180,53 +133,15 @@ export default function Navbar(): React.JSX.Element {
             </button>
           </div>
 
-          {isLoggedIn ? (
-            <>
-              <Link
-                href="/dashboard"
-                className="btn btn-ghost"
-                style={{
-                  marginTop: 8,
-                  justifyContent: "center",
-                  gap: 8,
-                }}
-                onClick={() => setMenuOpen(false)}
-              >
-                <LayoutDashboard size={14} />
-                {t("nav.dashboard", l)}
-              </Link>
-
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="btn btn-glow"
-                style={{ marginTop: 8, justifyContent: "center", gap: 8 }}
-              >
-                <LogOut size={14} />
-                {t("nav.signout", l)}
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="btn btn-ghost"
-                style={{ marginTop: 8, justifyContent: "center" }}
-                onClick={() => setMenuOpen(false)}
-              >
-                {t("nav.signin", l)}
-              </Link>
-
-              <Link
-                href="/register"
-                className="btn btn-glow"
-                style={{ marginTop: 8, justifyContent: "center" }}
-                onClick={() => setMenuOpen(false)}
-              >
-                {t("nav.cta", l)}
-              </Link>
-            </>
-          )}
+          <Link
+            href="/login"
+            className="btn btn-glow"
+            style={{ marginTop: 8, justifyContent: "center", gap: 8 }}
+            onClick={() => setMenuOpen(false)}
+          >
+            {t("nav.cta", l)}
+            <ExternalLink size={14} />
+          </Link>
         </div>
       )}
 
@@ -236,7 +151,6 @@ export default function Navbar(): React.JSX.Element {
         @media (max-width: 768px) {
           .hamburger-btn { display: flex !important; }
           .nav-links { display: none !important; }
-          .nav-desktop-link,
           .nav-desktop-cta { display: none !important; }
         }
       `}</style>
