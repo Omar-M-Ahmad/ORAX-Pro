@@ -5,17 +5,11 @@
 
 import { Resend } from "resend";
 
-console.log(
-  "[email] RESEND_API_KEY exists:",
-  Boolean(process.env.RESEND_API_KEY),
-);
-console.log("[email] EMAIL_FROM:", process.env.EMAIL_FROM);
+const resendApiKey = process.env.RESEND_API_KEY;
+const emailFrom =
+  process.env.EMAIL_FROM?.trim() || "ORAX <onboarding@resend.dev>";
 
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
-
-const emailFrom = process.env.EMAIL_FROM || "ORAX <onboarding@resend.dev>";
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 export async function sendPasswordResetEmail(params: {
   to: string;
@@ -24,8 +18,9 @@ export async function sendPasswordResetEmail(params: {
   const { to, resetUrl } = params;
 
   if (!resend) {
+    console.log("[email] RESEND_API_KEY exists:", Boolean(resendApiKey));
     console.log("[email] Password reset URL:", resetUrl);
-    return;
+    throw new Error("RESEND_API_KEY is missing");
   }
 
   await resend.emails.send({
