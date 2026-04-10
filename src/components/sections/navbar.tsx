@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/components/providers/locale-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { t } from "@/i18n";
+import { signOut } from "next-auth/react";
 
 type NavbarProps = {
   isAuthenticated: boolean;
@@ -48,18 +49,13 @@ export default function Navbar({
   }, []);
 
   async function handleLogout(): Promise<void> {
-    await fetch("/api/auth/signout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        callbackUrl: `/${locale}/login`,
-      }).toString(),
+    await signOut({
+      redirect: false,
+      callbackUrl: `/${locale}/`,
     });
 
     setMenuOpen(false);
-    router.push(`/${locale}/login`);
+    router.push(`/${locale}/`);
     router.refresh();
   }
 
