@@ -5,6 +5,12 @@
 
 import { Resend } from "resend";
 
+console.log(
+  "[email] RESEND_API_KEY exists:",
+  Boolean(process.env.RESEND_API_KEY),
+);
+console.log("[email] EMAIL_FROM:", process.env.EMAIL_FROM);
+
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;

@@ -10,24 +10,48 @@ import Link from "next/link";
 import { useState } from "react";
 import { useLocale } from "@/components/providers/locale-provider";
 import { t } from "@/i18n";
+import Input from "@/components/ui/input";
 
 export default function ForgotPasswordForm(): React.JSX.Element {
   const { locale: l } = useLocale();
 
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [isPending, setIsPending] = useState(false);
 
-  const inp: React.CSSProperties = {
-    width: "100%",
-    padding: "11px 14px",
-    borderRadius: 10,
-    border: "1px solid var(--border)",
-    background: "var(--bg-1)",
-    color: "var(--text-1)",
-    fontSize: 14,
-    outline: "none",
-    boxSizing: "border-box",
-  };
+  async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    e.preventDefault();
+
+    setError("");
+    setIsPending(true);
+
+    try {
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data?.error || "Something went wrong.");
+        setIsPending(false);
+        return;
+      }
+
+      setSuccess(true);
+      setIsPending(false);
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setIsPending(false);
+    }
+  }
 
   return (
     <div
@@ -85,10 +109,7 @@ export default function ForgotPasswordForm(): React.JSX.Element {
           </div>
         ) : (
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSuccess(true);
-            }}
+            onSubmit={handleSubmit}
             style={{ display: "flex", flexDirection: "column", gap: 16 }}
           >
             <div>
@@ -116,28 +137,44 @@ export default function ForgotPasswordForm(): React.JSX.Element {
                     color: "var(--text-3)",
                   }}
                 />
-                <input
+                <Input
                   id="forgot-email"
+                  name="email"
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  style={{ ...inp, paddingInlineStart: 38 }}
+                  style={{ paddingInlineStart: 38 }}
                 />
               </div>
             </div>
 
+            {error ? (
+              <p
+                style={{
+                  fontSize: 13,
+                  color: "var(--red)",
+                  margin: 0,
+                }}
+              >
+                {error}
+              </p>
+            ) : null}
+
             <button
               type="submit"
               className="btn btn-glow"
+              disabled={isPending}
               style={{
                 width: "100%",
                 justifyContent: "center",
                 padding: "13px",
+                opacity: isPending ? 0.7 : 1,
+                cursor: isPending ? "not-allowed" : "pointer",
               }}
             >
-              {t("auth.forgot.submit", l)}
+              {isPending ? "Loading..." : t("auth.forgot.submit", l)}
               <ArrowRight size={15} />
             </button>
           </form>

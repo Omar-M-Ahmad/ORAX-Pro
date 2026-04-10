@@ -47,6 +47,9 @@ export async function POST(request: Request): Promise<Response> {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
+    console.log("[forgot-password] resetUrl", resetUrl);
+    console.log("[forgot-password] email target", user.email);
+
     await sendPasswordResetEmail({
       to: user.email,
       resetUrl,
@@ -56,7 +59,15 @@ export async function POST(request: Request): Promise<Response> {
   } catch (error) {
     console.error("[api/auth/forgot-password][POST]", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        details:
+          process.env.NODE_ENV === "development"
+            ? error instanceof Error
+              ? error.message
+              : String(error)
+            : undefined,
+      },
       { status: 500 },
     );
   }

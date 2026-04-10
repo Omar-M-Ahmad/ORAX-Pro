@@ -7,6 +7,7 @@
 
 import { CheckCircle2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useLocale } from "@/components/providers/locale-provider";
 import { t } from "@/i18n";
@@ -14,10 +15,57 @@ import Input from "@/components/ui/input";
 
 export default function ResetPasswordForm(): React.JSX.Element {
   const { locale: l } = useLocale();
+  const searchParams = useSearchParams();
 
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [isPending, setIsPending] = useState(false);
+
+  const token = searchParams.get("token") ?? "";
+
+  async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    e.preventDefault();
+
+    setError("");
+
+    if (!token) {
+      setError("Invalid or missing reset token.");
+      return;
+    }
+
+    setIsPending(true);
+
+    try {
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data?.error || "Something went wrong.");
+        setIsPending(false);
+        return;
+      }
+
+      setSuccess(true);
+      setIsPending(false);
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setIsPending(false);
+    }
+  }
 
   return (
     <div
@@ -75,10 +123,7 @@ export default function ResetPasswordForm(): React.JSX.Element {
           </div>
         ) : (
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSuccess(true);
-            }}
+            onSubmit={handleSubmit}
             style={{ display: "flex", flexDirection: "column", gap: 16 }}
           >
             <div>
@@ -98,6 +143,7 @@ export default function ResetPasswordForm(): React.JSX.Element {
               <div style={{ position: "relative" }}>
                 <Input
                   id="reset-password"
+                  name="password"
                   type={showPass ? "text" : "password"}
                   value={password}
                   placeholder={showPass ? "••••••••" : "password"}
@@ -124,16 +170,31 @@ export default function ResetPasswordForm(): React.JSX.Element {
               </div>
             </div>
 
+            {error ? (
+              <p
+                style={{
+                  fontSize: 13,
+                  color: "var(--red)",
+                  margin: 0,
+                }}
+              >
+                {error}
+              </p>
+            ) : null}
+
             <button
               type="submit"
               className="btn btn-glow"
+              disabled={isPending}
               style={{
                 width: "100%",
                 justifyContent: "center",
                 padding: "13px",
+                opacity: isPending ? 0.7 : 1,
+                cursor: isPending ? "not-allowed" : "pointer",
               }}
             >
-              {t("auth.reset.submit", l)}
+              {isPending ? "Loading..." : t("auth.reset.submit", l)}
             </button>
           </form>
         )}
