@@ -1,5 +1,5 @@
 /**
- * @file src/features/dashboard/components/settings-view.tsx
+ * @file src/components/dashboard/components/settings-view.tsx
  * @description Settings view with real user data.
  * Supports profile update and account deletion.
  */

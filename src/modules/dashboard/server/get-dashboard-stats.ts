@@ -1,5 +1,5 @@
 /**
- * @file src/lib/dashboard.ts
+ * @file src/modules/dashboard/server/dashboard.ts
  * @description Data helpers for dashboard statistics.
  */
 

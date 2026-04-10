@@ -8,7 +8,7 @@ import { and, eq, gt } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { users, passwordResets } from "@/lib/db/schema";
-import { hashPassword } from "@/lib/auth-utils";
+import { hashPassword } from "@/lib/auth/password";
 
 export async function POST(request: Request): Promise<Response> {
   try {

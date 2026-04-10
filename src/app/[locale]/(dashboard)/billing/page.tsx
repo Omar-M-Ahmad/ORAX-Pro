@@ -3,7 +3,7 @@
  * @description Billing page with dynamic subscription details.
  */
 
-import BillingView from "@/features/dashboard/components/billing-view";
+import BillingView from "@/components/dashboard/billing-view";
 import { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Billing" };

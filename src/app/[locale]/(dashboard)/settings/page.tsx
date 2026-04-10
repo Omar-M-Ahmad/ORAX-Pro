@@ -4,7 +4,7 @@
  * Supports profile update and account deletion.
  */
 
-import SettingsView from "@/features/dashboard/components/settings-view";
+import SettingsView from "@/components/dashboard/settings-view";
 import { Metadata } from "next";
 
 export const metadata: Metadata = { title: "settings" };

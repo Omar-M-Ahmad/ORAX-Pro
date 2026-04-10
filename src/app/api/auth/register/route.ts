@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { hashPassword } from "@/lib/auth-utils";
+import { hashPassword } from "@/lib/auth/password";
 import { eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {

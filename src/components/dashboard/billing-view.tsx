@@ -1,5 +1,5 @@
 /**
- * @file features/auth/dashboard/billing-view.tsx
+ * @file src/components/dashboard/billing-view.tsx
  * @description Billing view with dynamic subscription details.
  */
 

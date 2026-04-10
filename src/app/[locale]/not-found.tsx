@@ -8,7 +8,7 @@ import { AlertTriangle, Home } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
-import NotFoundBackButton from "@/components/ui/button";
+import NotFoundBackButton from "@/components/shared/not-found-back-button";
 import { t } from "@/i18n";
 
 export const metadata: Metadata = {

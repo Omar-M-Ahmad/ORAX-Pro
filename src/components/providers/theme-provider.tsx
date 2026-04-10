@@ -1,5 +1,5 @@
 /**
- * @file components/providers/theme-provider.tsx
+ * @file src/components/providers/theme-provider.tsx
  * @description ORAX theme provider.
  *
  * Responsibility:

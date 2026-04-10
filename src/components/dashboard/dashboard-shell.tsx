@@ -1,5 +1,5 @@
 /**
- * @file src/features/dashboard/components/dashboard-shell.tsx
+ * @file src/components/dashboard/components/dashboard-shell.tsx
  * @description Client dashboard shell for ORAX.
  */
 

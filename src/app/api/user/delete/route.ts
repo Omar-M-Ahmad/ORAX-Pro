@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { users, accounts, sessions, subscriptions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";

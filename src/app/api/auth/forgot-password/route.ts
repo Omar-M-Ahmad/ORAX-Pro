@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { users, passwordResets } from "@/lib/db/schema";
-import { generateToken } from "@/lib/tokens";
+import { generateToken } from "@/lib/tokens/index";
 import { sendPasswordResetEmail } from "@/lib/email";
 
 export async function POST(request: Request): Promise<Response> {

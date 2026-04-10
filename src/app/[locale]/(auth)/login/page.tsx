@@ -9,7 +9,7 @@
 import { Metadata } from "next";
 import { Zap } from "lucide-react";
 import Link from "next/link";
-import LoginForm from "@/features/auth/components/login-form";
+import LoginForm from "@/app/[locale]/(auth)/login/_form";
 
 export const metadata: Metadata = { title: "Login" };
 

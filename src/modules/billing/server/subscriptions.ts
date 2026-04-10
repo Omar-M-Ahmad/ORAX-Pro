@@ -1,5 +1,5 @@
 /**
- * @file src/lib/subscriptions.ts
+ * @file src/modulers/billing/server/subscriptions.ts
  * @description Helpers to fetch subscription data from the database.
  */
 

@@ -3,8 +3,8 @@
  * @description Server dashboard layout that reads auth session.
  */
 
-import { auth } from "@/lib/auth";
-import DashboardShell from "@/features/dashboard/components/dashboard-shell";
+import { auth } from "@/lib/auth/config";
+import DashboardShell from "@/components/dashboard/dashboard-shell";
 
 export default async function DashboardLayout({
   children,

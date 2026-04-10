@@ -5,7 +5,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/config";
 import { siteConfig } from "@/config/site";
 
 export async function GET(): Promise<Response> {

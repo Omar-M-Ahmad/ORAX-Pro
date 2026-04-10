@@ -3,5 +3,5 @@
  * @description Auth.js v5 catch-all handler.
  */
 
-import { handlers } from "@/lib/auth";
+import { handlers } from "@/lib/auth/config";
 export const { GET, POST } = handlers;

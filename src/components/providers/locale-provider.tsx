@@ -1,5 +1,5 @@
 /**
- * @file components/providers/locale-provider.tsx
+ * @file src/components/providers/locale-provider.tsx
  * @description ORAX locale provider.
  *
  * Responsibility:

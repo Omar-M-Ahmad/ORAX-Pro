@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { getDashboardStats } from "@/lib/dashboard";
+import { getDashboardStats } from "@/modules/dashboard/server/get-dashboard-stats";
 
 /** GET /api/dashboard — returns dashboard stats */
 export async function GET(): Promise<Response> {

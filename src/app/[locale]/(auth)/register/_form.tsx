@@ -1,5 +1,5 @@
 /**
- * @file src/features/auth/components/register-form.tsx
+ * @file app/(auth)/register/_form.tsx
  * @description Register form component for ORAX.
  */
 

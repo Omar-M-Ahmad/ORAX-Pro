@@ -1,5 +1,5 @@
 /**
- * @file src/features/auth/components/forgot-password-form.tsx
+ * @file src/app/(auth)/forgot-password/_form.tsx
  * @description Forgot password form for ORAX.
  */
 

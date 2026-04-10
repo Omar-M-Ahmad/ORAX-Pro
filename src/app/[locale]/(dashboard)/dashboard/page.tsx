@@ -3,7 +3,7 @@
  * @description ORAX Dashboard overview with real data.
  */
 
-import DashboardView from "@/features/dashboard/components/dashboard-view";
+import DashboardView from "@/components/dashboard/dashboard-view";
 import { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Dashboard" };

@@ -13,7 +13,7 @@ import { eq } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { users, accounts, sessions, verificationTokens } from "@/lib/db/schema";
-import { comparePasswords } from "@/lib/auth-utils";
+import { comparePasswords } from "@/lib/auth/password";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({

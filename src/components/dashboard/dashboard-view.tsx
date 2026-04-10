@@ -1,5 +1,5 @@
 /**
- * @file src/features/dashboard/components/dashboard-view.tsx
+ * @file src/components/dashboard/components/dashboard-view.tsx
  * @description Dashboard view with real data.
  */
 

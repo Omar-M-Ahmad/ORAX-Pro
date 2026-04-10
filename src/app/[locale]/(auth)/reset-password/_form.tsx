@@ -1,5 +1,5 @@
 /**
- * @file src/features/auth/components/reset-password-form.tsx
+ * @file src/app/(auth)/reset-password/_form.tsx
  * @description Reset password form using token from query string.
  */
 

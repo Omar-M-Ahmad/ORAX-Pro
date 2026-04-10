@@ -8,7 +8,7 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 

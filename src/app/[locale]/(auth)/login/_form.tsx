@@ -1,5 +1,5 @@
 /**
- * @file src/features/auth/components/login-form.tsx
+ * @file app/(auth)/login/_form.tsx
  * @description Login form for ORAX.
  */
 
