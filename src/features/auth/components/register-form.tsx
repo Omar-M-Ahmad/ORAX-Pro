@@ -8,6 +8,9 @@
 import { ArrowRight, Check, Eye, EyeOff, Zap } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+
 import { useLocale } from "@/components/providers/locale-provider";
 import { type TKey, t } from "@/i18n";
 import { SocialIcons } from "@/components/shared/icons";
@@ -17,7 +20,71 @@ const perkKeys: TKey[] = ["auth.perk1", "auth.perk2", "auth.perk3"];
 
 export default function RegisterForm(): React.JSX.Element {
   const { locale: l } = useLocale();
+  const router = useRouter();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState("");
+  const [isPending, setIsPending] = useState(false);
+
+  async function handleRegister(
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    e.preventDefault();
+
+    setError("");
+    setIsPending(true);
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data?.message || "Registration failed.");
+        setIsPending(false);
+        return;
+      }
+
+      const loginResult = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      setIsPending(false);
+
+      if (loginResult?.error) {
+        router.push("/login");
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setIsPending(false);
+    }
+  }
+
+  async function handleOAuthRegister(provider: "google" | "github") {
+    setError("");
+    await signIn(provider, {
+      callbackUrl: "/dashboard",
+    });
+  }
 
   return (
     <div
@@ -190,8 +257,9 @@ export default function RegisterForm(): React.JSX.Element {
               marginBottom: 28,
             }}
           >
-            <Link
-              href="/dashboard"
+            <button
+              type="button"
+              onClick={() => handleOAuthRegister("github")}
               className="btn btn-ghost"
               style={{
                 padding: "10px 16px",
@@ -202,9 +270,11 @@ export default function RegisterForm(): React.JSX.Element {
             >
               <SocialIcons.GitHub />
               GitHub
-            </Link>
-            <Link
-              href="/dashboard"
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleOAuthRegister("google")}
               className="btn btn-ghost"
               style={{
                 padding: "10px 16px",
@@ -215,7 +285,7 @@ export default function RegisterForm(): React.JSX.Element {
             >
               <SocialIcons.Google />
               Google
-            </Link>
+            </button>
           </div>
 
           <div
@@ -239,7 +309,10 @@ export default function RegisterForm(): React.JSX.Element {
             <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
           </div>
 
-          <form style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <form
+            onSubmit={handleRegister}
+            style={{ display: "flex", flexDirection: "column", gap: 14 }}
+          >
             <div>
               <label
                 htmlFor="register-name"
@@ -258,6 +331,8 @@ export default function RegisterForm(): React.JSX.Element {
                 name="name"
                 type="text"
                 placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
@@ -280,6 +355,8 @@ export default function RegisterForm(): React.JSX.Element {
                 name="email"
                 type="email"
                 placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -304,6 +381,8 @@ export default function RegisterForm(): React.JSX.Element {
                   name="password"
                   type={showPass ? "text" : "password"}
                   placeholder={showPass ? "••••••••" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
                 />
@@ -328,19 +407,34 @@ export default function RegisterForm(): React.JSX.Element {
               </div>
             </div>
 
-            <Link
-              href="/dashboard"
+            {error ? (
+              <p
+                style={{
+                  fontSize: 13,
+                  color: "var(--red)",
+                  margin: 0,
+                }}
+              >
+                {error}
+              </p>
+            ) : null}
+
+            <button
+              type="submit"
               className="btn btn-glow"
+              disabled={isPending}
               style={{
                 width: "100%",
                 justifyContent: "center",
                 padding: "13px",
                 marginTop: 4,
+                opacity: isPending ? 0.7 : 1,
+                cursor: isPending ? "not-allowed" : "pointer",
               }}
             >
-              {t("auth.register.submit", l)}
+              {isPending ? "Loading..." : t("auth.register.submit", l)}
               <ArrowRight size={15} aria-hidden="true" />
-            </Link>
+            </button>
           </form>
 
           <p
