@@ -14,6 +14,7 @@ import HeroSection from "@/components/sections/hero";
 import Navbar from "@/components/sections/navbar";
 import Pricing from "@/components/sections/pricing";
 import ScrollUI from "@/components/shared/scroll-ui";
+import { auth } from "@/lib/auth/config";
 
 export const metadata: Metadata = {
   title: "Home | ORAX",
@@ -21,11 +22,13 @@ export const metadata: Metadata = {
     "ORAX is a serious SaaS starter system built for Arabic and RTL product.",
 };
 
-export default function HomePage(): React.JSX.Element {
+export default async function HomePage(): Promise<React.JSX.Element> {
+  const session = await auth();
+
   return (
     <>
       <ScrollUI />
-      <Navbar />
+      <Navbar isAuthenticated={Boolean(session?.user)} />
 
       <main>
         <HeroSection />

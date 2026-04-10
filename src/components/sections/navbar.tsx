@@ -7,7 +7,6 @@
 
 import { ExternalLink, Menu, Moon, Sun, X } from "lucide-react";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -15,16 +14,21 @@ import { useLocale } from "@/components/providers/locale-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { t } from "@/i18n";
 
+type NavbarProps = {
+  isAuthenticated: boolean;
+};
+
 const navLinks = [
   { tKey: "nav.features" as const, href: "#features" },
   { tKey: "nav.pricing" as const, href: "#pricing" },
   { tKey: "nav.faq" as const, href: "#faq" },
 ];
 
-export default function Navbar(): React.JSX.Element {
+export default function Navbar({
+  isAuthenticated,
+}: NavbarProps): React.JSX.Element {
   const { theme, toggleTheme } = useTheme();
   const { locale, setLocale } = useLocale();
-  const { data: session, status } = useSession();
   const router = useRouter();
 
   const l = locale;
@@ -44,18 +48,20 @@ export default function Navbar(): React.JSX.Element {
   }, []);
 
   async function handleLogout(): Promise<void> {
-    await signOut({
-      redirect: false,
-      callbackUrl: `/${locale}/login`,
+    await fetch("/api/auth/signout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        callbackUrl: `/${locale}/login`,
+      }).toString(),
     });
 
     setMenuOpen(false);
     router.push(`/${locale}/login`);
     router.refresh();
   }
-
-  const isAuthenticated = Boolean(session?.user);
-  const isLoading = status === "loading";
 
   return (
     <nav
@@ -89,9 +95,7 @@ export default function Navbar(): React.JSX.Element {
             {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
           </button>
 
-          {isLoading ? (
-            <div style={{ width: 116, height: 40 }} />
-          ) : isAuthenticated ? (
+          {isAuthenticated ? (
             <div
               className="nav-desktop-cta"
               style={{ display: "flex", gap: 10, alignItems: "center" }}
@@ -178,7 +182,7 @@ export default function Navbar(): React.JSX.Element {
             </button>
           </div>
 
-          {isLoading ? null : isAuthenticated ? (
+          {isAuthenticated ? (
             <div
               style={{
                 display: "flex",
