@@ -51,7 +51,7 @@ export default function SettingsView({
     setIsSaving(true);
 
     try {
-      const response = await fetch("/api/settings/profile", {
+      const response = await fetch("/api/user", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
