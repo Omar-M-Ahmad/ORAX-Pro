@@ -5,17 +5,58 @@
 
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
+
+import Input from "@/components/ui/input";
+import { SocialIcons } from "@/components/shared/icons";
 import { useLocale } from "@/components/providers/locale-provider";
 import { t } from "@/i18n";
-import { useState } from "react";
-import Input from "@/components/ui/input";
-import Link from "next/link";
-import { ArrowRight, Eye, EyeOff } from "lucide-react";
-import { SocialIcons } from "@/components/shared/icons";
 
-export default function LoginForm() {
+export default function LoginForm(): React.JSX.Element {
   const { locale: l } = useLocale();
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState("");
+  const [isPending, setIsPending] = useState(false);
+
+  async function handleCredentialsLogin(
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    e.preventDefault();
+
+    setError("");
+    setIsPending(true);
+
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    setIsPending(false);
+
+    if (result?.error) {
+      setError("Invalid email or password.");
+      return;
+    }
+
+    router.push("/dashboard");
+    router.refresh();
+  }
+
+  async function handleOAuthLogin(provider: "google" | "github") {
+    setError("");
+    await signIn(provider, {
+      callbackUrl: "/dashboard",
+    });
+  }
 
   return (
     <div
@@ -52,8 +93,9 @@ export default function LoginForm() {
           marginBottom: 28,
         }}
       >
-        <Link
-          href="/dashboard"
+        <button
+          type="button"
+          onClick={() => handleOAuthLogin("github")}
           className="btn btn-ghost"
           style={{
             padding: "10px 16px",
@@ -64,10 +106,11 @@ export default function LoginForm() {
         >
           <SocialIcons.GitHub />
           GitHub
-        </Link>
+        </button>
 
-        <Link
-          href="/dashboard"
+        <button
+          type="button"
+          onClick={() => handleOAuthLogin("google")}
           className="btn btn-ghost"
           style={{
             padding: "10px 16px",
@@ -78,7 +121,7 @@ export default function LoginForm() {
         >
           <SocialIcons.Google />
           Google
-        </Link>
+        </button>
       </div>
 
       <div
@@ -103,7 +146,10 @@ export default function LoginForm() {
         <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
       </div>
 
-      <form style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <form
+        onSubmit={handleCredentialsLogin}
+        style={{ display: "flex", flexDirection: "column", gap: 16 }}
+      >
         <div>
           <label
             htmlFor="login-email"
@@ -122,6 +168,8 @@ export default function LoginForm() {
             name="email"
             type="email"
             placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
@@ -164,6 +212,8 @@ export default function LoginForm() {
               name="password"
               type={showPass ? "text" : "password"}
               placeholder={showPass ? "••••••••" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               minLength={8}
             />
@@ -188,19 +238,34 @@ export default function LoginForm() {
           </div>
         </div>
 
-        <Link
-          href="/dashboard"
+        {error ? (
+          <p
+            style={{
+              fontSize: 13,
+              color: "var(--red)",
+              margin: 0,
+            }}
+          >
+            {error}
+          </p>
+        ) : null}
+
+        <button
+          type="submit"
           className="btn btn-glow"
+          disabled={isPending}
           style={{
             width: "100%",
             justifyContent: "center",
             padding: "13px",
             marginTop: 8,
+            opacity: isPending ? 0.7 : 1,
+            cursor: isPending ? "not-allowed" : "pointer",
           }}
         >
-          {t("auth.login.submit", l)}
+          {isPending ? "Loading..." : t("auth.login.submit", l)}
           <ArrowRight size={15} aria-hidden="true" />
-        </Link>
+        </button>
       </form>
 
       <p
