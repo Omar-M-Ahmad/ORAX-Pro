@@ -9,6 +9,7 @@ import { LocaleProvider } from "@/components/providers/locale-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { siteConfig } from "@/config/site";
 import "@/app/styles/globals.css";
+import AuthSessionProvider from "@/components/providers/session-provider";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -101,9 +102,11 @@ export default async function RootLayout({
       className={`${bricolage.variable} ${cairo.variable}`}
     >
       <body suppressHydrationWarning>
-        <LocaleProvider locale={resolvedLocale}>
-          <ThemeProvider>{children}</ThemeProvider>
-        </LocaleProvider>
+        <AuthSessionProvider>
+          <LocaleProvider locale={resolvedLocale}>
+            <ThemeProvider>{children}</ThemeProvider>
+          </LocaleProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

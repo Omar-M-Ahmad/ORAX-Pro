@@ -7,7 +7,10 @@
 
 import { ExternalLink, Menu, Moon, Sun, X } from "lucide-react";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
 import { useLocale } from "@/components/providers/locale-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { t } from "@/i18n";
@@ -20,8 +23,10 @@ const navLinks = [
 
 export default function Navbar(): React.JSX.Element {
   const { theme, toggleTheme } = useTheme();
-
   const { locale, setLocale } = useLocale();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
   const l = locale;
 
   const toggleLocale = () => {
@@ -37,6 +42,20 @@ export default function Navbar(): React.JSX.Element {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  async function handleLogout(): Promise<void> {
+    await signOut({
+      redirect: false,
+      callbackUrl: `/${locale}/login`,
+    });
+
+    setMenuOpen(false);
+    router.push(`/${locale}/login`);
+    router.refresh();
+  }
+
+  const isAuthenticated = Boolean(session?.user);
+  const isLoading = status === "loading";
 
   return (
     <nav
@@ -70,14 +89,40 @@ export default function Navbar(): React.JSX.Element {
             {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
           </button>
 
-          <Link
-            href="/login"
-            className="btn btn-primary nav-desktop-cta"
-            style={{ padding: "9px 20px", fontSize: 14 }}
-            aria-label="Buy ORAX"
-          >
-            {t("nav.cta", l)}
-          </Link>
+          {isLoading ? (
+            <div style={{ width: 116, height: 40 }} />
+          ) : isAuthenticated ? (
+            <div
+              className="nav-desktop-cta"
+              style={{ display: "flex", gap: 10, alignItems: "center" }}
+            >
+              <Link
+                href="/dashboard"
+                className="btn btn-primary"
+                style={{ padding: "9px 20px", fontSize: 14 }}
+              >
+                Dashboard
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="btn btn-ghost"
+                style={{ padding: "9px 20px", fontSize: 14 }}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="btn btn-primary nav-desktop-cta"
+              style={{ padding: "9px 20px", fontSize: 14 }}
+              aria-label="Buy ORAX"
+            >
+              {t("nav.cta", l)}
+            </Link>
+          )}
 
           <button
             className="nav-toggle-btn hamburger-btn"
@@ -133,15 +178,45 @@ export default function Navbar(): React.JSX.Element {
             </button>
           </div>
 
-          <Link
-            href="/login"
-            className="btn btn-glow"
-            style={{ marginTop: 8, justifyContent: "center", gap: 8 }}
-            onClick={() => setMenuOpen(false)}
-          >
-            {t("nav.cta", l)}
-            <ExternalLink size={14} />
-          </Link>
+          {isLoading ? null : isAuthenticated ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+                marginTop: 8,
+              }}
+            >
+              <Link
+                href="/dashboard"
+                className="btn btn-glow"
+                style={{ justifyContent: "center", gap: 8 }}
+                onClick={() => setMenuOpen(false)}
+              >
+                Dashboard
+                <ExternalLink size={14} />
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="btn btn-ghost"
+                style={{ justifyContent: "center", gap: 8 }}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="btn btn-glow"
+              style={{ marginTop: 8, justifyContent: "center", gap: 8 }}
+              onClick={() => setMenuOpen(false)}
+            >
+              {t("nav.cta", l)}
+              <ExternalLink size={14} />
+            </Link>
+          )}
         </div>
       )}
 
