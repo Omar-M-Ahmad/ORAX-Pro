@@ -3,11 +3,14 @@
  * @description Billing page with dynamic subscription details.
  */
 
-import BillingView from "@/components/dashboard/billing-view";
 import { Metadata } from "next";
+import BillingView from "@/components/dashboard/billing-view";
+import { getBillingPageData } from "@/modules/billing/server/get-billing-page-data";
 
 export const metadata: Metadata = { title: "Billing" };
 
-export default function BillingPage(): React.JSX.Element {
-  return <BillingView />;
+export default async function BillingPage(): Promise<React.JSX.Element> {
+  const data = await getBillingPageData();
+
+  return <BillingView data={data} />;
 }

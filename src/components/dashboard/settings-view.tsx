@@ -1,7 +1,6 @@
 /**
- * @file src/components/dashboard/components/settings-view.tsx
+ * @file src/components/dashboard/settings-view.tsx
  * @description Settings view with real user data.
- * Supports profile update and account deletion.
  */
 
 "use client";
@@ -13,10 +12,16 @@ import { useTheme } from "@/components/providers/theme-provider";
 import TextArea from "@/components/ui/textarea";
 import Input from "@/components/ui/input";
 import { t } from "@/i18n";
+import type { SettingsPageData } from "@/modules/settings/server/get-settings-page-data";
 
-export default function SettingsView(): React.JSX.Element {
+type SettingsViewProps = {
+  data: SettingsPageData;
+};
+
+export default function SettingsView({
+  data,
+}: SettingsViewProps): React.JSX.Element {
   const { theme, toggleTheme } = useTheme();
-
   const { locale, setLocale } = useLocale();
   const l = locale;
 
@@ -24,14 +29,14 @@ export default function SettingsView(): React.JSX.Element {
     const nextLocale = locale === "en" ? "ar" : "en";
     setLocale(nextLocale);
   };
+
   const [saved, setSaved] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  const [name, setName] = useState("Omar Ahmad");
-  const [email] = useState("omar@example.com");
-  const [bio, setBio] = useState(
-    "Building serious SaaS systems with real Arabic + RTL support.",
-  );
+  const [isSaving, setIsSaving] = useState(false);
+  const [name, setName] = useState(data.name);
+  const [email] = useState(data.email);
+  const [bio, setBio] = useState(data.bio);
+  const [error, setError] = useState("");
 
   const card: React.CSSProperties = {
     background: "var(--surface)",
@@ -40,6 +45,36 @@ export default function SettingsView(): React.JSX.Element {
     padding: 28,
     marginBottom: 20,
   };
+
+  async function handleSave(): Promise<void> {
+    setError("");
+    setIsSaving(true);
+
+    try {
+      const response = await fetch("/api/settings/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, bio }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result?.error || "Failed to save settings.");
+        setIsSaving(false);
+        return;
+      }
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   return (
     <div style={{ maxWidth: 640 }}>
@@ -147,17 +182,25 @@ export default function SettingsView(): React.JSX.Element {
             />
           </div>
 
+          {error ? (
+            <p style={{ fontSize: 13, color: "var(--red)", margin: 0 }}>
+              {error}
+            </p>
+          ) : null}
+
           <button
             type="button"
-            onClick={() => {
-              setSaved(true);
-              setTimeout(() => setSaved(false), 2000);
-            }}
+            onClick={handleSave}
             className="btn btn-primary"
             style={{ alignSelf: "flex-start", gap: 8 }}
+            disabled={isSaving}
           >
             <Save size={14} />
-            {saved ? t("settings.saved", l) : t("settings.save", l)}
+            {isSaving
+              ? "Saving..."
+              : saved
+                ? t("settings.saved", l)
+                : t("settings.save", l)}
           </button>
         </div>
       </div>

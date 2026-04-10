@@ -1,15 +1,19 @@
 /**
- * @file src/components/dashboard/components/dashboard-view.tsx
+ * @file src/components/dashboard/dashboard-view.tsx
  * @description Dashboard view with real data.
  */
 
 "use client";
 
-import { Activity, DollarSign, TrendingUp, Users } from "lucide-react";
+import { DollarSign, TrendingUp, Users } from "lucide-react";
 import { useLocale } from "@/components/providers/locale-provider";
 import { t } from "@/i18n";
+import type { DashboardPageData } from "@/modules/dashboard/server/get-dashboard-page-data";
 
-const barHeights = [38, 55, 42, 70, 52, 84, 63, 88, 58, 80, 72, 100];
+type DashboardViewProps = {
+  data: DashboardPageData;
+};
+
 const months = [
   "Jan",
   "Feb",
@@ -25,64 +29,50 @@ const months = [
   "Dec",
 ];
 
-const stats = [
-  {
-    labelKey: "dash.revenue" as const,
-    deltaKey: "dash.dRevDelta" as const,
-    icon: DollarSign,
-    value: "$24,800",
-    deltaPos: true,
-  },
-  {
-    labelKey: "dash.users" as const,
-    deltaKey: "dash.dUsrDelta" as const,
-    icon: Users,
-    value: "1,240",
-    deltaPos: true,
-  },
-  {
-    labelKey: "dash.mrr" as const,
-    deltaKey: "dash.dMrrDelta" as const,
-    icon: TrendingUp,
-    value: "$8,900",
-    deltaPos: true,
-  },
-  {
-    labelKey: "dash.churn" as const,
-    deltaKey: "dash.dChuDelta" as const,
-    icon: Activity,
-    value: "2.1%",
-    deltaPos: false,
-  },
-];
+const chartHeights = [42, 56, 48, 64, 58, 72, 60, 76, 66, 82, 74, 92];
 
-const rows = [
-  {
-    name: "Acme Studio",
-    plan: "Pro",
-    amount: "$99",
-    statusKey: "dash.active",
-    date: "Apr 02",
-  },
-  {
-    name: "Noor Labs",
-    plan: "Starter",
-    amount: "$49",
-    statusKey: "dash.trial",
-    date: "Apr 03",
-  },
-  {
-    name: "Atlas Team",
-    plan: "Pro",
-    amount: "$99",
-    statusKey: "dash.active",
-    date: "Apr 04",
-  },
-];
+function formatCurrency(value: number): string {
+  return `$${value.toLocaleString("en-US")}`;
+}
 
-export default function DashboardView(): React.JSX.Element {
+function formatDate(value: Date | null): string {
+  if (!value) return "-";
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+  }).format(value);
+}
+
+export default function DashboardView({
+  data,
+}: DashboardViewProps): React.JSX.Element {
   const { locale: l } = useLocale();
-  const welcomeText = t("dash.welcome", l, { name: "Omar" });
+  const welcomeText = t("dash.welcome", l, { name: data.userName });
+
+  const stats = [
+    {
+      labelKey: "dash.revenue" as const,
+      deltaKey: "dash.dRevDelta" as const,
+      icon: DollarSign,
+      value: formatCurrency(data.stats.revenue),
+      deltaPos: true,
+    },
+    {
+      labelKey: "dash.users" as const,
+      deltaKey: "dash.dUsrDelta" as const,
+      icon: Users,
+      value: data.stats.users.toLocaleString("en-US"),
+      deltaPos: true,
+    },
+    {
+      labelKey: "dash.mrr" as const,
+      deltaKey: "dash.dMrrDelta" as const,
+      icon: TrendingUp,
+      value: data.stats.subscriptions.toLocaleString("en-US"),
+      deltaPos: true,
+    },
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
@@ -105,7 +95,7 @@ export default function DashboardView(): React.JSX.Element {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
+          gridTemplateColumns: "repeat(3,1fr)",
           gap: 16,
         }}
       >
@@ -205,7 +195,7 @@ export default function DashboardView(): React.JSX.Element {
             height: 160,
           }}
         >
-          {barHeights.map((h, i) => (
+          {chartHeights.map((h, i) => (
             <div
               key={`bar-${i}-${h}`}
               style={{
@@ -302,12 +292,14 @@ export default function DashboardView(): React.JSX.Element {
             </thead>
 
             <tbody>
-              {rows.map((row, i) => (
+              {data.recent.map((row, i) => (
                 <tr
-                  key={row.name}
+                  key={`${row.customer}-${i}`}
                   style={{
                     borderBottom:
-                      i < rows.length - 1 ? "1px solid var(--border)" : "none",
+                      i < data.recent.length - 1
+                        ? "1px solid var(--border)"
+                        : "none",
                   }}
                 >
                   <td
@@ -318,7 +310,7 @@ export default function DashboardView(): React.JSX.Element {
                       color: "var(--text-1)",
                     }}
                   >
-                    {row.name}
+                    {row.customer}
                   </td>
                   <td
                     style={{
@@ -338,7 +330,7 @@ export default function DashboardView(): React.JSX.Element {
                       fontFamily: "var(--font-mono)",
                     }}
                   >
-                    {row.amount}
+                    {formatCurrency(row.price)}
                   </td>
                   <td style={{ padding: "14px 24px" }}>
                     <span
@@ -349,21 +341,21 @@ export default function DashboardView(): React.JSX.Element {
                         padding: "3px 10px",
                         borderRadius: 999,
                         color:
-                          row.statusKey === "dash.active"
+                          row.status === "active"
                             ? "var(--green)"
                             : "var(--amber)",
                         background:
-                          row.statusKey === "dash.active"
+                          row.status === "active"
                             ? "rgba(34,197,94,0.1)"
                             : "rgba(255,140,66,0.1)",
                         border: `1px solid ${
-                          row.statusKey === "dash.active"
+                          row.status === "active"
                             ? "rgba(34,197,94,0.2)"
                             : "rgba(255,140,66,0.2)"
                         }`,
                       }}
                     >
-                      {t(row.statusKey, l)}
+                      {row.status}
                     </span>
                   </td>
                   <td
@@ -373,7 +365,7 @@ export default function DashboardView(): React.JSX.Element {
                       color: "var(--text-3)",
                     }}
                   >
-                    {row.date}
+                    {formatDate(row.createdAt)}
                   </td>
                 </tr>
               ))}

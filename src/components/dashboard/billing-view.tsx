@@ -8,6 +8,11 @@
 import { CreditCard, Download, Zap } from "lucide-react";
 import { useLocale } from "@/components/providers/locale-provider";
 import { t } from "@/i18n";
+import type { BillingPageData } from "@/modules/billing/server/get-billing-page-data";
+
+type BillingViewProps = {
+  data: BillingPageData;
+};
 
 const planFeatureKeys = [
   "billing.f1",
@@ -17,12 +22,23 @@ const planFeatureKeys = [
   "billing.f5",
 ] as const;
 
-const invoices = [
-  { id: "INV-001", date: "Apr 01, 2026", amount: "$99" },
-  { id: "INV-002", date: "Mar 01, 2026", amount: "$99" },
-];
+function formatCurrency(value: number): string {
+  return `$${value.toLocaleString("en-US")}`;
+}
 
-export default function BillingView(): React.JSX.Element {
+function formatDate(value: Date | null): string {
+  if (!value) return "-";
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  }).format(value);
+}
+
+export default function BillingView({
+  data,
+}: BillingViewProps): React.JSX.Element {
   const { locale: l } = useLocale();
 
   return (
@@ -91,12 +107,19 @@ export default function BillingView(): React.JSX.Element {
                   fontWeight: 600,
                   padding: "2px 10px",
                   borderRadius: 999,
-                  background: "rgba(34,197,94,0.15)",
-                  color: "var(--green)",
-                  border: "1px solid rgba(34,197,94,0.3)",
+                  background:
+                    data.status === "active"
+                      ? "rgba(34,197,94,0.15)"
+                      : "rgba(255,140,66,0.15)",
+                  color:
+                    data.status === "active" ? "var(--green)" : "var(--amber)",
+                  border:
+                    data.status === "active"
+                      ? "1px solid rgba(34,197,94,0.3)"
+                      : "1px solid rgba(255,140,66,0.3)",
                 }}
               >
-                {t("billing.active", l)}
+                {data.status}
               </span>
             </div>
 
@@ -117,13 +140,13 @@ export default function BillingView(): React.JSX.Element {
                   color: "var(--text-1)",
                 }}
               >
-                {t("editions.pro.name", l)}
+                {data.currentPlan}
               </p>
 
               <p
                 style={{ fontSize: 20, fontWeight: 700, color: "var(--brand)" }}
               >
-                $99
+                {formatCurrency(data.price)}
               </p>
             </div>
 
@@ -284,12 +307,12 @@ export default function BillingView(): React.JSX.Element {
           </thead>
 
           <tbody>
-            {invoices.map((inv, i) => (
+            {data.invoices.map((inv, i) => (
               <tr
                 key={inv.id}
                 style={{
                   borderBottom:
-                    i < invoices.length - 1
+                    i < data.invoices.length - 1
                       ? "1px solid var(--border)"
                       : "none",
                 }}
@@ -312,7 +335,7 @@ export default function BillingView(): React.JSX.Element {
                     color: "var(--text-2)",
                   }}
                 >
-                  {inv.date}
+                  {formatDate(inv.date)}
                 </td>
 
                 <td
@@ -324,7 +347,7 @@ export default function BillingView(): React.JSX.Element {
                     fontFamily: "var(--font-mono)",
                   }}
                 >
-                  {inv.amount}
+                  {formatCurrency(inv.amount)}
                 </td>
 
                 <td style={{ padding: "14px 24px" }}>
@@ -334,12 +357,21 @@ export default function BillingView(): React.JSX.Element {
                       fontWeight: 600,
                       padding: "3px 10px",
                       borderRadius: 999,
-                      color: "var(--green)",
-                      background: "rgba(34,197,94,0.1)",
-                      border: "1px solid rgba(34,197,94,0.2)",
+                      color:
+                        inv.status === "active"
+                          ? "var(--green)"
+                          : "var(--amber)",
+                      background:
+                        inv.status === "active"
+                          ? "rgba(34,197,94,0.1)"
+                          : "rgba(255,140,66,0.1)",
+                      border:
+                        inv.status === "active"
+                          ? "1px solid rgba(34,197,94,0.2)"
+                          : "1px solid rgba(255,140,66,0.2)",
                     }}
                   >
-                    {t("billing.paid", l)}
+                    {inv.status}
                   </span>
                 </td>
 
