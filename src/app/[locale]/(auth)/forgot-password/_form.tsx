@@ -14,6 +14,7 @@ import Input from "@/components/ui/input";
 
 export default function ForgotPasswordForm(): React.JSX.Element {
   const { locale: l } = useLocale();
+  const localizePath = (path: string) => `/${l}${path}`;
 
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
@@ -40,7 +41,7 @@ export default function ForgotPasswordForm(): React.JSX.Element {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data?.error || "Something went wrong.");
+        setError(data?.error || t("auth.common.unexpectedError", l));
         setIsPending(false);
         return;
       }
@@ -48,7 +49,7 @@ export default function ForgotPasswordForm(): React.JSX.Element {
       setSuccess(true);
       setIsPending(false);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("auth.common.unexpectedError", l));
       setIsPending(false);
     }
   }
@@ -174,7 +175,7 @@ export default function ForgotPasswordForm(): React.JSX.Element {
                 cursor: isPending ? "not-allowed" : "pointer",
               }}
             >
-              {isPending ? "Loading..." : t("auth.forgot.submit", l)}
+              {isPending ? t("common.loading", l) : t("auth.forgot.submit", l)}
               <ArrowRight size={15} />
             </button>
           </form>
@@ -189,7 +190,7 @@ export default function ForgotPasswordForm(): React.JSX.Element {
           }}
         >
           <Link
-            href="/login"
+            href={localizePath("/login")}
             style={{
               color: "var(--brand)",
               textDecoration: "none",

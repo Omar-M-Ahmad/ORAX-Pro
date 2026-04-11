@@ -6,7 +6,7 @@
  * - OAuth via next-auth signIn
  */
 
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import RegisterForm from "@/app/[locale]/(auth)/register/_form";
 
 export const metadata: Metadata = { title: "Register" };

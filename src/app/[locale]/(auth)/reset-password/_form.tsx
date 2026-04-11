@@ -15,6 +15,7 @@ import Input from "@/components/ui/input";
 
 export default function ResetPasswordForm(): React.JSX.Element {
   const { locale: l } = useLocale();
+  const localizePath = (path: string) => `/${l}${path}`;
   const searchParams = useSearchParams();
 
   const [password, setPassword] = useState("");
@@ -33,7 +34,7 @@ export default function ResetPasswordForm(): React.JSX.Element {
     setError("");
 
     if (!token) {
-      setError("Invalid or missing reset token.");
+      setError(t("auth.reset.invalidToken", l));
       return;
     }
 
@@ -54,7 +55,7 @@ export default function ResetPasswordForm(): React.JSX.Element {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data?.error || "Something went wrong.");
+        setError(data?.error || t("auth.common.unexpectedError", l));
         setIsPending(false);
         return;
       }
@@ -62,7 +63,7 @@ export default function ResetPasswordForm(): React.JSX.Element {
       setSuccess(true);
       setIsPending(false);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("auth.common.unexpectedError", l));
       setIsPending(false);
     }
   }
@@ -194,7 +195,7 @@ export default function ResetPasswordForm(): React.JSX.Element {
                 cursor: isPending ? "not-allowed" : "pointer",
               }}
             >
-              {isPending ? "Loading..." : t("auth.reset.submit", l)}
+              {isPending ? t("common.loading", l) : t("auth.reset.submit", l)}
             </button>
           </form>
         )}
@@ -208,7 +209,7 @@ export default function ResetPasswordForm(): React.JSX.Element {
           }}
         >
           <Link
-            href="/login"
+            href={localizePath("/login")}
             style={{
               color: "var(--brand)",
               textDecoration: "none",

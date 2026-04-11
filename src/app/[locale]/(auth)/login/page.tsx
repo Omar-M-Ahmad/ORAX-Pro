@@ -6,8 +6,8 @@
  * - OAuth icons inline SVG
  */
 
-import { Metadata } from "next";
 import { Zap } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import LoginForm from "@/app/[locale]/(auth)/login/_form";
 

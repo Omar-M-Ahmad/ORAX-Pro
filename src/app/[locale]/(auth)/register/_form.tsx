@@ -21,6 +21,7 @@ const perkKeys: TKey[] = ["auth.perk1", "auth.perk2", "auth.perk3"];
 export default function RegisterForm(): React.JSX.Element {
   const { locale: l } = useLocale();
   const router = useRouter();
+  const localizePath = (path: string) => `/${l}${path}`;
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -53,7 +54,7 @@ export default function RegisterForm(): React.JSX.Element {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data?.message || "Registration failed.");
+        setError(data?.message || t("auth.register.failed", l));
         setIsPending(false);
         return;
       }
@@ -67,14 +68,14 @@ export default function RegisterForm(): React.JSX.Element {
       setIsPending(false);
 
       if (loginResult?.error) {
-        router.push("/login");
+        router.push(localizePath("/login"));
         return;
       }
 
-      router.push("/dashboard");
+      router.push(localizePath("/dashboard"));
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("auth.common.unexpectedError", l));
       setIsPending(false);
     }
   }
@@ -82,7 +83,7 @@ export default function RegisterForm(): React.JSX.Element {
   async function handleOAuthRegister(provider: "google" | "github") {
     setError("");
     await signIn(provider, {
-      callbackUrl: "/dashboard",
+      callbackUrl: localizePath("/dashboard"),
     });
   }
 
@@ -111,7 +112,7 @@ export default function RegisterForm(): React.JSX.Element {
         }}
       >
         <Link
-          href="/"
+          href={localizePath("")}
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -389,7 +390,11 @@ export default function RegisterForm(): React.JSX.Element {
                 <button
                   type="button"
                   onClick={() => setShowPass((v) => !v)}
-                  aria-label={showPass ? "Hide" : "Show"}
+                  aria-label={
+                    showPass
+                      ? t("auth.common.hidePassword", l)
+                      : t("auth.common.showPassword", l)
+                  }
                   style={{
                     position: "absolute",
                     insetInlineEnd: 12,
@@ -432,7 +437,7 @@ export default function RegisterForm(): React.JSX.Element {
                 cursor: isPending ? "not-allowed" : "pointer",
               }}
             >
-              {isPending ? "Loading..." : t("auth.register.submit", l)}
+              {isPending ? t("common.loading", l) : t("auth.register.submit", l)}
               <ArrowRight size={15} aria-hidden="true" />
             </button>
           </form>
@@ -448,14 +453,14 @@ export default function RegisterForm(): React.JSX.Element {
           >
             {t("auth.register.terms", l)}{" "}
             <Link
-              href="/terms"
+              href={localizePath("/terms")}
               style={{ color: "var(--brand)", textDecoration: "none" }}
             >
               {t("auth.register.tos", l)}
             </Link>{" "}
             {t("auth.register.and", l)}{" "}
             <Link
-              href="/privacy"
+              href={localizePath("/privacy")}
               style={{ color: "var(--brand)", textDecoration: "none" }}
             >
               {t("auth.register.privacy", l)}
@@ -472,7 +477,7 @@ export default function RegisterForm(): React.JSX.Element {
           >
             {t("auth.register.hasAccount", l)}{" "}
             <Link
-              href="/login"
+              href={localizePath("/login")}
               style={{
                 color: "var(--brand)",
                 fontWeight: 600,

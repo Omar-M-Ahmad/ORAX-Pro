@@ -40,6 +40,18 @@ export default function BillingView({
   data,
 }: BillingViewProps): React.JSX.Element {
   const { locale: l } = useLocale();
+  const localizedStatus =
+    data.status === "active"
+      ? t("billing.active", l)
+      : data.status === "inactive"
+        ? t("billing.inactive", l)
+        : data.status;
+  const localizedPlan =
+    data.currentPlan.toLowerCase() === "pro"
+      ? t("billing.planName", l)
+      : data.currentPlan.toLowerCase() === "starter"
+        ? t("billing.planStarter", l)
+        : t("billing.planFree", l);
 
   return (
     <div style={{ maxWidth: 760 }}>
@@ -119,7 +131,7 @@ export default function BillingView({
                       : "1px solid rgba(255,140,66,0.3)",
                 }}
               >
-                {data.status}
+                {localizedStatus}
               </span>
             </div>
 
@@ -140,7 +152,7 @@ export default function BillingView({
                   color: "var(--text-1)",
                 }}
               >
-                {data.currentPlan}
+                {localizedPlan}
               </p>
 
               <p

@@ -19,6 +19,7 @@ import { t } from "@/i18n";
 export default function LoginForm(): React.JSX.Element {
   const { locale: l } = useLocale();
   const router = useRouter();
+  const localizePath = (path: string) => `/${l}${path}`;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,18 +44,18 @@ export default function LoginForm(): React.JSX.Element {
     setIsPending(false);
 
     if (result?.error) {
-      setError("Invalid email or password.");
+      setError(t("auth.login.invalidCredentials", l));
       return;
     }
 
-    router.push("/dashboard");
+    router.push(localizePath("/dashboard"));
     router.refresh();
   }
 
   async function handleOAuthLogin(provider: "google" | "github") {
     setError("");
     await signIn(provider, {
-      callbackUrl: "/dashboard",
+      callbackUrl: localizePath("/dashboard"),
     });
   }
 
@@ -195,7 +196,7 @@ export default function LoginForm(): React.JSX.Element {
             </label>
 
             <Link
-              href="/forgot-password"
+              href={localizePath("/forgot-password")}
               style={{
                 fontSize: 12,
                 color: "var(--brand)",
@@ -220,7 +221,11 @@ export default function LoginForm(): React.JSX.Element {
             <button
               type="button"
               onClick={() => setShowPass((v) => !v)}
-              aria-label={showPass ? "Hide password" : "Show password"}
+              aria-label={
+                showPass
+                  ? t("auth.common.hidePassword", l)
+                  : t("auth.common.showPassword", l)
+              }
               style={{
                 position: "absolute",
                 insetInlineEnd: 12,
@@ -263,7 +268,7 @@ export default function LoginForm(): React.JSX.Element {
             cursor: isPending ? "not-allowed" : "pointer",
           }}
         >
-          {isPending ? "Loading..." : t("auth.login.submit", l)}
+          {isPending ? t("common.loading", l) : t("auth.login.submit", l)}
           <ArrowRight size={15} aria-hidden="true" />
         </button>
       </form>
@@ -278,7 +283,7 @@ export default function LoginForm(): React.JSX.Element {
       >
         {t("auth.login.noAccount", l)}{" "}
         <Link
-          href="/register"
+          href={localizePath("/register")}
           style={{
             color: "var(--brand)",
             fontWeight: 600,

@@ -4,11 +4,15 @@
  * Supports profile update and account deletion.
  */
 
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import SettingsView from "@/components/dashboard/settings-view";
 import { getSettingsPageData } from "@/modules/settings/server/get-settings-page-data";
 
-export const metadata: Metadata = { title: "settings" };
+export const metadata: Metadata = {
+  title: "Settings | ORAX Pro",
+  description:
+    "Update profile, language, theme, and security settings in ORAX Pro.",
+};
 
 export default async function SettingsPage(): Promise<React.JSX.Element> {
   const data = await getSettingsPageData();

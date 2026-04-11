@@ -62,7 +62,7 @@ export default function SettingsView({
       const result = await response.json();
 
       if (!response.ok) {
-        setError(result?.error || "Failed to save settings.");
+        setError(result?.error || t("settings.saveFailed", l));
         setIsSaving(false);
         return;
       }
@@ -70,7 +70,7 @@ export default function SettingsView({
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("auth.common.unexpectedError", l));
     } finally {
       setIsSaving(false);
     }
@@ -197,7 +197,7 @@ export default function SettingsView({
           >
             <Save size={14} />
             {isSaving
-              ? "Saving..."
+              ? t("settings.saving", l)
               : saved
                 ? t("settings.saved", l)
                 : t("settings.save", l)}

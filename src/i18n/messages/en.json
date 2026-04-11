@@ -22,7 +22,10 @@
     "signin": "Sign in",
     "cta": "Get Started",
     "langLabel": "عربي",
-    "langAriaEn": "Switch to Arabic"
+    "langAriaEn": "Switch to Arabic",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "billing": "Billing"
   },
   "hero": {
     "badge": "Next.js · TypeScript · Tailwind CSS · Arabic + English",
@@ -245,7 +248,8 @@
       "submit": "Sign in",
       "or": "or continue with",
       "noAccount": "Don't have an account?",
-      "register": "Get started"
+      "register": "Get started",
+      "invalidCredentials": "Invalid email or password."
     },
     "register": {
       "title": "Create your account",
@@ -261,7 +265,8 @@
       "and": "and",
       "privacy": "Privacy Policy",
       "headline1": "Ship your SaaS",
-      "headline2": "in days."
+      "headline2": "in days.",
+      "failed": "Registration failed."
     },
     "forgot": {
       "title": "Forgot your password?",
@@ -281,7 +286,12 @@
     },
     "perk1": "Full source code access",
     "perk2": "RTL + Arabic support included",
-    "perk3": "Lifetime updates on Complete tier"
+    "perk3": "Lifetime updates on Complete tier",
+    "common": {
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "unexpectedError": "Something went wrong. Please try again."
+    }
   },
   "dash": {
     "heading": "Dashboard",
@@ -337,7 +347,9 @@
     "deleteConfirmTitle": "Confirm account deletion",
     "deleteConfirmText": "This action cannot be undone. All your data will be permanently deleted.",
     "cancel": "Cancel",
-    "deleteConfirmBtn": "Yes, delete my account"
+    "deleteConfirmBtn": "Yes, delete my account",
+    "saving": "Saving...",
+    "saveFailed": "Failed to save settings."
   },
   "billing": {
     "heading": "Billing",
@@ -362,6 +374,9 @@
     "f4": "User Dashboard",
     "f5": "Lifetime updates",
     "planName": "Pro",
-    "cardExpires": "Expires 12/27"
+    "cardExpires": "Expires 12/27",
+    "inactive": "Inactive",
+    "planStarter": "Starter",
+    "planFree": "Free"
   }
 }

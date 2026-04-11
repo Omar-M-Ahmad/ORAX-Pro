@@ -1,138 +1,174 @@
-# ORAX-Starter
+# ORAX Pro
 
-ORAX-Starter is the first premium edition of ORAX — a modern Next.js SaaS starter kit.
+> **Arabic-ready SaaS starter that is actually production-minded**  
+> Next.js App Router + Auth + DB + Protected Routes + Bilingual UX (EN/AR, LTR/RTL).
 
-It provides everything you need to build a real SaaS product:
-authentication, dashboard, settings, and scalable architecture.
-
----
-
-## ✨ What is ORAX-Starter?
-
-This version goes beyond the free landing page and gives you:
-
-- Full authentication system
-- Protected dashboard
-- User settings
-- Billing UI (ready to integrate)
-- Clean scalable architecture
-- RTL + LTR support
-- Modern UI system
+![ORAX](./public/og-image.png)
 
 ---
 
-## 🚀 Features
+## Why ORAX Pro?
 
-- Next.js 16 (App Router)
-- TypeScript
-- Tailwind CSS
-- Dark / Light mode
-- Arabic / English (RTL support)
-- Authentication (login, register, reset password)
-- Protected routes
-- Dashboard layout
-- Settings page
-- Billing page (UI only)
-- Toast system
-- Clean component architecture
+Most starters are either:
+- beautiful but fake (no real backend flow), or
+- technical but poor in UX and bilingual support.
+
+**ORAX Pro is built to bridge both sides**:
+- polished product UI,
+- real authentication and database foundation,
+- Arabic credibility from day one.
 
 ---
 
-## 📦 Included
+## What makes it different from ORAX Free?
 
-- Landing page
-- Auth pages (login, register, forgot, reset)
-- Dashboard
-- Settings
-- Billing UI
-- API routes (auth + user)
-- i18n system
-- Theme system
-- Shared UI components
+### ORAX Free
+- Landing + design system direction
+- UI exploration
+- Great for evaluation and inspiration
 
----
-
-## ❌ Not Included
-
-- Payment integration (Stripe / Lemon Squeezy)
-- Webhooks
-- Subscription engine
-- Email production system
-- Advanced analytics
+### ORAX Pro (this repo)
+- Real auth flows (credentials + OAuth + reset password)
+- DB-backed modules and API routes
+- Protected app routes (dashboard/settings/billing)
+- User settings persistence
+- Billing foundation wired to subscription data model
 
 ---
 
-## 📁 Project Structure
+## Core Features
+
+- ✅ Next.js 16 App Router
+- ✅ TypeScript
+- ✅ NextAuth v5 + Drizzle Adapter
+- ✅ Credentials + Google + GitHub login
+- ✅ Forgot/reset password flows
+- ✅ Protected routes via edge proxy
+- ✅ Dashboard / Settings / Billing modules
+- ✅ English + Arabic messages
+- ✅ LTR + RTL layout support
+- ✅ Clean architecture by domain modules
+
+---
+
+## Architecture (simple and scalable)
 
 ```txt
 src/
   app/
-    (auth)/
-    (dashboard)/
+    [locale]/
+      (auth)/
+      (dashboard)/
     api/
   components/
+  modules/
+    billing/server/
+    dashboard/server/
+    settings/server/
   lib/
-  config/
+    auth/
+    db/
+    email/
+    tokens/
   i18n/
-  messages/
-  types/
+  config/
 ```
+
+### Architectural philosophy
+- `app/` = routing and page composition
+- `modules/` = domain server logic
+- `lib/` = infrastructure (auth, db, email, tokens)
+- `components/` = reusable UI/view layer
+
+This keeps the codebase easier to maintain as product complexity grows.
 
 ---
 
-## ⚙️ Getting Started
+## Real vs UI-ready boundaries
 
-Install dependencies:
+### Real now
+- Authentication/session management
+- Route protection
+- User profile/settings updates
+- Billing API + billing page reading subscription records
+
+### UI-ready next
+- Stripe/Lemon Squeezy payment checkout
+- Billing webhooks and full external sync
+- Advanced admin analytics
+
+---
+
+## SEO & Metadata
+
+Dashboard pages include explicit page metadata titles/descriptions for better indexing clarity:
+- Dashboard
+- Billing
+- Settings
+
+> Note: these pages are protected and primarily user-app pages, but metadata is still defined for consistency and SEO hygiene.
+
+---
+
+## Quick Start
 
 ```bash
 pnpm install
-```
-
-Run development server:
-
-```bash
 pnpm dev
 ```
 
-Open:
+Open: `http://localhost:3000`
 
+---
+
+## Environment Variables
+
+Create `.env.local` and set at minimum:
+
+```bash
+DATABASE_URL=
+AUTH_SECRET=
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Optional OAuth
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# Optional: enable dangerous same-email OAuth account linking
+AUTH_ALLOW_EMAIL_ACCOUNT_LINKING=false
 ```
-http://localhost:3000
-```
 
 ---
 
-## 🛠 Customization
+## Customization Guide
 
-You can customize:
+### Brand and pricing
+- `src/config/site.ts`
 
-- `src/config/site.ts` → name, pricing
-- `src/messages/*` → translations
-- `src/components/*` → UI
-- `src/app/*` → pages
+### Translations
+- `src/i18n/messages/en.json`
+- `src/i18n/messages/ar.json`
 
----
+### Product pages / UI
+- `src/components/*`
+- `src/app/[locale]/*`
 
-## 💡 Use Cases
-
-- SaaS startup
-- MVP product
-- Admin dashboard
-- Internal tools
-- Client projects
+### Business logic
+- `src/modules/*/server/*`
 
 ---
 
-## 🔄 Upgrade Path
+## Recommended next moves for production
 
-- ORAX-Free → landing only
-- ORAX-Starter → auth + dashboard
-- ORAX-Complete → full SaaS (payments + subscriptions)
+1. Integrate payment provider checkout + webhook flow.
+2. Add audit logs for sensitive account actions.
+3. Add admin module if global analytics are required.
+4. Add E2E tests for auth + locale-critical flows.
 
 ---
 
-## 📄 License
+## License
 
-This is a premium product.
-
-Redistribution or resale is not allowed.
+Commercial/premium template. Redistribution or resale is not allowed.
