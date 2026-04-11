@@ -1,11 +1,11 @@
 /**
  * @file src/app/api/billing/route.ts
  * @description API route to fetch billing info for the authenticated user.
- * Current phase: stable demo billing response.
  */
 
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/config";
+import { getUserSubscription } from "@/modules/billing/server/subscriptions";
 import { siteConfig } from "@/config/site";
 
 export async function GET(): Promise<Response> {
@@ -16,13 +16,18 @@ export async function GET(): Promise<Response> {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const subscription = await getUserSubscription(session.user.id);
+    const plan = subscription?.plan ?? "free";
+    const price =
+      siteConfig.pricing[plan as keyof typeof siteConfig.pricing] ?? 0;
+
     return NextResponse.json({
       subscription: {
-        id: `demo-${session.user.id}`,
-        plan: "pro",
-        status: "active",
-        price: siteConfig.pricing.pro,
-        currentPeriodEnd: null,
+        id: subscription?.id ?? null,
+        plan,
+        status: subscription?.status ?? "inactive",
+        price,
+        currentPeriodEnd: subscription?.createdAt ?? null,
       },
     });
   } catch (error) {

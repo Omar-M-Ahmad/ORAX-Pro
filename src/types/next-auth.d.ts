@@ -4,7 +4,6 @@
  * "include" patterns in tsconfig.json.
  */
 
-import NextAuth from "next-auth";
 import "next-auth/jwt";
 
 // Extend the User interface

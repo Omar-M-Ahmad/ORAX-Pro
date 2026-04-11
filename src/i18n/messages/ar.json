@@ -4,7 +4,7 @@
     "signIn": "تسجيل الدخول",
     "signOut": "تسجيل الخروج",
     "menu": "القائمة",
-    "loading": "جاري التحميل...`"
+    "loading": "جاري التحميل..."
   },
   "notFound": {
     "title": "الصفحة غير موجودة.",
@@ -22,7 +22,10 @@
     "signin": "تسجيل الدخول",
     "cta": "ابدأ الآن",
     "langLabel": "EN",
-    "langAriaEn": "Switch to English"
+    "langAriaEn": "Switch to English",
+    "dashboard": "لوحة التحكم",
+    "settings": "الإعدادات",
+    "billing": "الفواتير"
   },
   "hero": {
     "badge": "Next.js · TypeScript · Tailwind CSS · عربي + English",
@@ -245,7 +248,8 @@
       "submit": "تسجيل الدخول",
       "or": "أو تابع بـ",
       "noAccount": "ليس لديك حساب؟",
-      "register": "ابدأ الآن"
+      "register": "ابدأ الآن",
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
     },
     "register": {
       "title": "إنشاء حسابك",
@@ -261,7 +265,8 @@
       "and": "و",
       "privacy": "سياسة الخصوصية",
       "headline1": "ابنِ تطبيقك",
-      "headline2": "الذي يبيع."
+      "headline2": "الذي يبيع.",
+      "failed": "فشل إنشاء الحساب."
     },
     "forgot": {
       "title": "هل نسيت كلمة المرور؟",
@@ -281,7 +286,12 @@
     },
     "perk1": "وصول كامل للكود المصدري",
     "perk2": "دعم RTL والعربية مضمّن",
-    "perk3": "تحديثات مدى الحياة في خطة Complete"
+    "perk3": "تحديثات مدى الحياة في خطة Complete",
+    "common": {
+      "showPassword": "إظهار كلمة المرور",
+      "hidePassword": "إخفاء كلمة المرور",
+      "unexpectedError": "حدث خطأ ما. حاول مرة أخرى."
+    }
   },
   "dash": {
     "heading": "لوحة التحكم",
@@ -337,7 +347,9 @@
     "deleteConfirmTitle": "تأكيد حذف الحساب",
     "deleteConfirmText": "هذا الإجراء لا يمكن التراجع عنه. سيتم حذف جميع بياناتك نهائيًا.",
     "cancel": "إلغاء",
-    "deleteConfirmBtn": "نعم، احذف حسابي"
+    "deleteConfirmBtn": "نعم، احذف حسابي",
+    "saving": "جارٍ الحفظ...",
+    "saveFailed": "فشل حفظ الإعدادات."
   },
   "billing": {
     "heading": "الفواتير",
@@ -362,6 +374,9 @@
     "f4": "لوحة تحكم المستخدم",
     "f5": "تحديثات مدى الحياة",
     "planName": "برو",
-    "cardExpires": "تنتهي 12/27"
+    "cardExpires": "تنتهي 12/27",
+    "inactive": "غير نشط",
+    "planStarter": "ستارتر",
+    "planFree": "مجاني"
   }
 }

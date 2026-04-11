@@ -27,16 +27,10 @@ import { useTheme } from "@/components/providers/theme-provider";
 import { t } from "@/i18n";
 
 const navItems = [
-  { key: "dashboard" as const, icon: LayoutDashboard, href: "/dashboard" },
-  { key: "settings" as const, icon: Settings, href: "/settings" },
-  { key: "billing" as const, icon: CreditCard, href: "/billing" },
+  { key: "dashboard" as const, icon: LayoutDashboard, route: "/dashboard" },
+  { key: "settings" as const, icon: Settings, route: "/settings" },
+  { key: "billing" as const, icon: CreditCard, route: "/billing" },
 ];
-
-const navLabels = {
-  dashboard: { en: "Dashboard", ar: "لوحة التحكم" },
-  settings: { en: "Settings", ar: "الإعدادات" },
-  billing: { en: "Billing", ar: "الفواتير" },
-};
 
 type DashboardShellProps = {
   children: React.ReactNode;
@@ -55,8 +49,10 @@ export default function DashboardShell({
   const pathname = usePathname();
 
   const l = locale;
-  const isAr = l === "ar";
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const localizePath = (path: string) => `/${locale}${path}`;
+  const normalizedPathname =
+    pathname?.replace(/^\/(en|ar)(?=\/|$)/, "") || "/";
 
   const userInitial = useMemo(
     () => userName.charAt(0).toUpperCase(),
@@ -118,7 +114,7 @@ export default function DashboardShell({
           }}
         >
           <Link
-            href="/"
+            href={localizePath("")}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -180,9 +176,11 @@ export default function DashboardShell({
               gap: 2,
             }}
           >
-            {navItems.map(({ key, icon: Icon, href }) => {
+            {navItems.map(({ key, icon: Icon, route }) => {
+              const href = localizePath(route);
               const isActive =
-                pathname === href || pathname.startsWith(`${href}/`);
+                normalizedPathname === route ||
+                normalizedPathname.startsWith(`${route}/`);
 
               return (
                 <li key={key}>
@@ -207,7 +205,7 @@ export default function DashboardShell({
                     onClick={() => setSidebarOpen(false)}
                   >
                     <Icon size={16} aria-hidden="true" />
-                    {isAr ? navLabels[key].ar : navLabels[key].en}
+                    {t(`nav.${key}`, l)}
                   </Link>
                 </li>
               );
@@ -292,7 +290,7 @@ export default function DashboardShell({
             }}
           >
             <LogOut size={16} aria-hidden="true" />
-            {isAr ? "تسجيل الخروج" : "Logout"}
+            {t("common.signOut", l)}
           </button>
         </div>
       </aside>
@@ -355,7 +353,7 @@ export default function DashboardShell({
               className="nav-toggle-btn"
               style={{ fontSize: 11 }}
             >
-              {isAr ? "EN" : "عربي"}
+              {locale === "ar" ? "EN" : "عربي"}
             </button>
 
             <button

@@ -4,8 +4,9 @@
  */
 
 import { db } from "@/lib/db";
-import { users, subscriptions } from "@/lib/db/schema";
+import { subscriptions } from "@/lib/db/schema";
 import { siteConfig } from "@/config/site";
+import { desc, eq } from "drizzle-orm";
 
 /** Type for the dashboard statistics response */
 export interface DashboardStats {
@@ -21,43 +22,26 @@ export interface DashboardStats {
   }[];
 }
 
-/** Retrieve users/subscriptions and compute counts and revenue */
-export async function getDashboardStats(): Promise<DashboardStats> {
-  // Fetch all users and subscriptions in parallel
-  const [userList, subscriptionList] = await Promise.all([
-    db.select().from(users),
-    db.select().from(subscriptions),
-  ]);
+/** Retrieve current user subscriptions and compute personal stats */
+export async function getDashboardStats(userId: string): Promise<DashboardStats> {
+  const subscriptionList = await db.query.subscriptions.findMany({
+    where: eq(subscriptions.userId, userId),
+    orderBy: [desc(subscriptions.createdAt)],
+  });
 
-  const userCount = userList.length;
+  const userCount = 1;
   const subscriptionsCount = subscriptionList.length;
 
-  // Sum revenue based on plan price (ignoring refunds/cancellations)
   const revenue = subscriptionList.reduce((total, sub) => {
     const planPrice =
       siteConfig.pricing[sub.plan as keyof typeof siteConfig.pricing] ?? 0;
     return total + planPrice;
   }, 0);
-
-  // Build lookup map of users by ID
-  const userMap = new Map(userList.map((u) => [u.id, u]));
-
-  // Sort subscriptions by creation date descending and take latest 5
-  const sortedSubs = subscriptionList
-    .slice()
-    .sort((a, b) => {
-      const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return bDate - aDate;
-    })
-    .slice(0, 5);
-
-  const recent = sortedSubs.map((sub) => {
-    const user = userMap.get(sub.userId);
+  const recent = subscriptionList.slice(0, 5).map((sub) => {
     const price =
       siteConfig.pricing[sub.plan as keyof typeof siteConfig.pricing] ?? 0;
     return {
-      customer: user?.name ?? "Unknown",
+      customer: "You",
       plan: sub.plan,
       status: sub.status,
       price,

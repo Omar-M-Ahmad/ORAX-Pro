@@ -24,10 +24,13 @@ export type DashboardPageData = {
 
 export async function getDashboardPageData(): Promise<DashboardPageData> {
   const session = await auth();
-  const stats = await getDashboardStats();
+  const userId = session?.user?.id;
+  const stats = userId
+    ? await getDashboardStats(userId)
+    : { userCount: 0, subscriptionsCount: 0, revenue: 0, recent: [] };
 
   return {
-    userName: session?.user?.name?.trim() || "User",
+    userName: session?.user?.name?.trim() || "Account",
     stats: {
       revenue: stats.revenue,
       users: stats.userCount,

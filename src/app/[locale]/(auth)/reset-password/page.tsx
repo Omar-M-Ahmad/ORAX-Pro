@@ -3,7 +3,7 @@
  * @description Reset password page using token from query string.
  */
 
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import ResetPasswordForm from "@/app/[locale]/(auth)/reset-password/_form";
 
 export const metadata: Metadata = { title: "Reset Password" };

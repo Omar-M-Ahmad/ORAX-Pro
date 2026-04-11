@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth/config";
 import { db } from "@/lib/db";
 import { subscriptions } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
+import { siteConfig } from "@/config/site";
 
 export type BillingPageData = {
   currentPlan: string;
@@ -25,9 +26,9 @@ export async function getBillingPageData(): Promise<BillingPageData> {
 
   if (!session?.user?.id) {
     return {
-      currentPlan: "Pro",
-      status: "active",
-      price: 99,
+      currentPlan: "Free",
+      status: "inactive",
+      price: siteConfig.pricing.free,
       invoices: [],
     };
   }
@@ -40,13 +41,17 @@ export async function getBillingPageData(): Promise<BillingPageData> {
   const current = userSubscriptions[0];
 
   return {
-    currentPlan: current?.plan ?? "Pro",
-    status: current?.status ?? "active",
-    price: current?.plan === "starter" ? 49 : 99,
+    currentPlan: current?.plan ?? "free",
+    status: current?.status ?? "inactive",
+    price:
+      siteConfig.pricing[
+        (current?.plan ?? "free") as keyof typeof siteConfig.pricing
+      ] ?? 0,
     invoices: userSubscriptions.map((item) => ({
       id: item.id,
       date: item.createdAt ?? null,
-      amount: item.plan === "starter" ? 49 : 99,
+      amount:
+        siteConfig.pricing[item.plan as keyof typeof siteConfig.pricing] ?? 0,
       status: item.status,
     })),
   };

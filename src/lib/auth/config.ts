@@ -16,6 +16,9 @@ import { users, accounts, sessions, verificationTokens } from "@/lib/db/schema";
 import { comparePasswords } from "@/lib/auth/password";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 
+const allowEmailAccountLinking =
+  process.env.AUTH_ALLOW_EMAIL_ACCOUNT_LINKING === "true";
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
   trustHost: true,
@@ -72,15 +75,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      // Link accounts automatically if the email is the same
-      allowDangerousEmailAccountLinking: true,
+      allowDangerousEmailAccountLinking: allowEmailAccountLinking,
     }),
     // GitHub Provider
     GitHub({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      // Link accounts automatically if the email is the same
-      allowDangerousEmailAccountLinking: true,
+      allowDangerousEmailAccountLinking: allowEmailAccountLinking,
     }),
   ],
 
