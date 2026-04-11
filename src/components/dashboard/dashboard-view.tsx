@@ -1,11 +1,11 @@
 /**
  * @file src/components/dashboard/dashboard-view.tsx
- * @description Dashboard view with real data.
+ * @description Dashboard view with starter showcase data.
  */
 
 "use client";
 
-import { DollarSign, TrendingUp, Users } from "lucide-react";
+import { Activity, FolderKanban, Layers3 } from "lucide-react";
 import { useLocale } from "@/components/providers/locale-provider";
 import { t } from "@/i18n";
 import type { DashboardPageData } from "@/modules/dashboard/server/get-dashboard-page-data";
@@ -14,25 +14,8 @@ type DashboardViewProps = {
   data: DashboardPageData;
 };
 
-const months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
-const chartHeights = [42, 56, 48, 64, 58, 72, 60, 76, 66, 82, 74, 92];
-
-function formatCurrency(value: number): string {
-  return `$${value.toLocaleString("en-US")}`;
+function formatNumber(value: number): string {
+  return value.toLocaleString("en-US");
 }
 
 function formatDate(value: Date | null): string {
@@ -52,25 +35,19 @@ export default function DashboardView({
 
   const stats = [
     {
-      labelKey: "dash.revenue" as const,
-      deltaKey: "dash.dRevDelta" as const,
-      icon: DollarSign,
-      value: formatCurrency(data.stats.revenue),
-      deltaPos: true,
+      label: t("dash.cards.activeSubscriptions", l),
+      icon: Layers3,
+      value: formatNumber(data.stats.activeSubscriptions),
     },
     {
-      labelKey: "dash.users" as const,
-      deltaKey: "dash.dUsrDelta" as const,
-      icon: Users,
-      value: data.stats.users.toLocaleString("en-US"),
-      deltaPos: true,
+      label: t("dash.cards.showcaseProjects", l),
+      icon: FolderKanban,
+      value: formatNumber(data.stats.showcaseProjects),
     },
     {
-      labelKey: "dash.mrr" as const,
-      deltaKey: "dash.dMrrDelta" as const,
-      icon: TrendingUp,
-      value: data.stats.subscriptions.toLocaleString("en-US"),
-      deltaPos: true,
+      label: t("dash.cards.usageEvents", l),
+      icon: Activity,
+      value: formatNumber(data.stats.showcaseUsage),
     },
   ];
 
@@ -95,13 +72,13 @@ export default function DashboardView({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3,1fr)",
+          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
           gap: 16,
         }}
       >
-        {stats.map(({ labelKey, deltaKey, icon: Icon, value, deltaPos }) => (
+        {stats.map(({ label, icon: Icon, value }) => (
           <div
-            key={labelKey}
+            key={label}
             style={{
               background: "var(--surface)",
               border: "1px solid var(--border)",
@@ -124,8 +101,9 @@ export default function DashboardView({
                   fontWeight: 500,
                 }}
               >
-                {t(labelKey, l)}
+                {label}
               </p>
+
               <div
                 style={{
                   width: 32,
@@ -149,19 +127,9 @@ export default function DashboardView({
                 fontWeight: 800,
                 letterSpacing: "-0.03em",
                 color: "var(--text-1)",
-                marginBottom: 6,
               }}
             >
               {value}
-            </p>
-
-            <p
-              style={{
-                fontSize: 12,
-                color: deltaPos ? "var(--green)" : "var(--red)",
-              }}
-            >
-              {t(deltaKey, l)}
             </p>
           </div>
         ))}
@@ -181,196 +149,49 @@ export default function DashboardView({
             fontSize: 16,
             fontWeight: 700,
             color: "var(--text-1)",
-            marginBottom: 24,
+            marginBottom: 18,
           }}
         >
-          {t("dash.chart", l)}
+          {t("dash.cards.recentSubscriptions", l)}
         </p>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            gap: 8,
-            height: 160,
-          }}
-        >
-          {chartHeights.map((h, i) => (
-            <div
-              key={`bar-${i}-${h}`}
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 6,
-                height: "100%",
-                justifyContent: "flex-end",
-              }}
-            >
+        <div style={{ display: "grid", gap: 12 }}>
+          {data.subscription.length === 0 ? (
+            <p style={{ color: "var(--text-3)", fontSize: 14 }}>
+              {t("dash.cards.emptySubscriptions", l)}
+            </p>
+          ) : (
+            data.subscription.map((item) => (
               <div
+                key={item.id}
                 style={{
-                  width: "100%",
-                  height: `${h}%`,
-                  borderRadius: "6px 6px 4px 4px",
-                  background:
-                    i === 11
-                      ? "var(--brand)"
-                      : `rgba(99,102,241,${0.15 + (h / 100) * 0.4})`,
-                  boxShadow:
-                    i === 11 ? "0 0 12px rgba(99,102,241,0.4)" : "none",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: 10,
-                  color: "var(--text-3)",
-                  fontFamily: "var(--font-mono)",
+                  display: "grid",
+                  gridTemplateColumns: "1.5fr 1fr 1fr",
+                  gap: 12,
+                  padding: 14,
+                  border: "1px solid var(--border)",
+                  borderRadius: 14,
                 }}
               >
-                {months[i]}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+                <div>
+                  <p style={{ color: "var(--text-1)", fontWeight: 600 }}>
+                    {item.plan}
+                  </p>
+                  <p style={{ color: "var(--text-3)", fontSize: 13 }}>
+                    {formatDate(item.currentPeriodEnd)}
+                  </p>
+                </div>
 
-      <div
-        style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: 20,
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            padding: "20px 24px",
-            borderBottom: "1px solid var(--border)",
-          }}
-        >
-          <p
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 16,
-              fontWeight: 700,
-              color: "var(--text-1)",
-            }}
-          >
-            {t("dash.recent", l)}
-          </p>
-        </div>
+                <p style={{ color: "var(--text-2)", fontSize: 14 }}>
+                  {item.status}
+                </p>
 
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid var(--border)" }}>
-                {[
-                  "dash.hCustomer",
-                  "dash.hPlan",
-                  "dash.hAmount",
-                  "dash.hStatus",
-                  "dash.hDate",
-                ].map((hKey) => (
-                  <th
-                    key={hKey}
-                    style={{
-                      padding: "12px 24px",
-                      textAlign: "start",
-                      fontSize: 11,
-                      fontFamily: "var(--font-mono)",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      color: "var(--text-3)",
-                      fontWeight: 500,
-                    }}
-                  >
-                    {t(hKey, l)}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.recent.map((row, i) => (
-                <tr
-                  key={`${row.customer}-${i}`}
-                  style={{
-                    borderBottom:
-                      i < data.recent.length - 1
-                        ? "1px solid var(--border)"
-                        : "none",
-                  }}
-                >
-                  <td
-                    style={{
-                      padding: "14px 24px",
-                      fontSize: 14,
-                      fontWeight: 600,
-                      color: "var(--text-1)",
-                    }}
-                  >
-                    {row.customer}
-                  </td>
-                  <td
-                    style={{
-                      padding: "14px 24px",
-                      fontSize: 13,
-                      color: "var(--text-2)",
-                    }}
-                  >
-                    {row.plan}
-                  </td>
-                  <td
-                    style={{
-                      padding: "14px 24px",
-                      fontSize: 14,
-                      fontWeight: 600,
-                      color: "var(--text-1)",
-                      fontFamily: "var(--font-mono)",
-                    }}
-                  >
-                    {formatCurrency(row.price)}
-                  </td>
-                  <td style={{ padding: "14px 24px" }}>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        fontFamily: "var(--font-mono)",
-                        padding: "3px 10px",
-                        borderRadius: 999,
-                        color:
-                          row.status === "active"
-                            ? "var(--green)"
-                            : "var(--amber)",
-                        background:
-                          row.status === "active"
-                            ? "rgba(34,197,94,0.1)"
-                            : "rgba(255,140,66,0.1)",
-                        border: `1px solid ${
-                          row.status === "active"
-                            ? "rgba(34,197,94,0.2)"
-                            : "rgba(255,140,66,0.2)"
-                        }`,
-                      }}
-                    >
-                      {row.status}
-                    </span>
-                  </td>
-                  <td
-                    style={{
-                      padding: "14px 24px",
-                      fontSize: 13,
-                      color: "var(--text-3)",
-                    }}
-                  >
-                    {formatDate(row.createdAt)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                <p style={{ color: "var(--text-2)", fontSize: 14 }}>
+                  {item.currentPeriodEnd ? t("dash.cards.renewsSoon", l) : "-"}
+                </p>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

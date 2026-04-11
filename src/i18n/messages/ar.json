@@ -317,7 +317,15 @@
     "mar19": "19 مارس",
     "mar18": "18 مارس",
     "mar17": "17 مارس",
-    "mar16": "16 مارس"
+    "mar16": "16 مارس",
+    "cards": {
+      "activeSubscriptions": "الاشتراكات النشطة",
+      "showcaseProjects": "مشاريع تجريبية",
+      "usageEvents": "أحداث الاستخدام",
+      "recentSubscriptions": "أحدث الاشتراكات",
+      "emptySubscriptions": "لا توجد اشتراكات بعد.",
+      "renewsSoon": "يتجدد قريبًا"
+    }
   },
   "settings": {
     "heading": "الإعدادات",
@@ -341,6 +349,7 @@
     "switchToAr": "English",
     "danger": "منطقة الخطر",
     "delete": "حذف الحساب",
+    "deleting": "جارٍ الحذف...",
     "deleteDesc": "حذف حسابك بشكل دائم. لا يمكن التراجع.",
     "deleteBtn": "حذف الحساب",
     "emailReadonly": "البريد الإلكتروني غير قابل للتغيير",
@@ -378,5 +387,10 @@
     "inactive": "غير نشط",
     "planStarter": "ستارتر",
     "planFree": "مجاني"
+  },
+  "ui": {
+    "toggleMenu": "تبديل قائمة التنقل",
+    "switchToLight": "التبديل إلى الوضع الفاتح",
+    "switchToDark": "التبديل إلى الوضع الداكن"
   }
 }

@@ -14,6 +14,7 @@ import { useLocale } from "@/components/providers/locale-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { t } from "@/i18n";
 import { signOut } from "next-auth/react";
+import { localizePath } from "@/i18n/localize-path";
 
 type NavbarProps = {
   isAuthenticated: boolean;
@@ -66,7 +67,11 @@ export default function Navbar({
       aria-label="Main navigation"
     >
       <div className="nav-inner">
-        <Link href="/" className="nav-logo" onClick={() => setMenuOpen(false)}>
+        <Link
+          href={localizePath(locale, "")}
+          className="nav-logo"
+          onClick={() => setMenuOpen(false)}
+        >
           <div className="nav-logo-dot" aria-hidden="true" />
           ORAX
         </Link>
@@ -86,7 +91,11 @@ export default function Navbar({
             className="nav-toggle-btn"
             onClick={toggleTheme}
             type="button"
-            aria-label={theme === "dark" ? "Switch to light" : "Switch to dark"}
+            aria-label={
+              theme === "dark"
+                ? t("ui.switchToLight", l)
+                : t("ui.switchToDark", l)
+            }
           >
             {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
           </button>
@@ -97,11 +106,11 @@ export default function Navbar({
               style={{ display: "flex", gap: 10, alignItems: "center" }}
             >
               <Link
-                href="/dashboard"
+                href={localizePath(locale, "/dashboard")}
                 className="btn btn-primary"
                 style={{ padding: "9px 20px", fontSize: 14 }}
               >
-                Dashboard
+                {t("nav.dashboard", l)}
               </Link>
 
               <button
@@ -110,12 +119,12 @@ export default function Navbar({
                 className="btn btn-ghost"
                 style={{ padding: "9px 20px", fontSize: 14 }}
               >
-                Logout
+                {t("common.signOut", l)}
               </button>
             </div>
           ) : (
             <Link
-              href="/login"
+              href={localizePath(locale, "/login")}
               className="btn btn-primary nav-desktop-cta"
               style={{ padding: "9px 20px", fontSize: 14 }}
               aria-label="Buy ORAX"
@@ -128,7 +137,7 @@ export default function Navbar({
             className="nav-toggle-btn hamburger-btn"
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
-            aria-label="Toggle menu"
+            aria-label={t("ui.toggleMenu", l)}
             type="button"
           >
             {menuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -188,12 +197,12 @@ export default function Navbar({
               }}
             >
               <Link
-                href="/dashboard"
+                href={localizePath(locale, "/dashboard")}
                 className="btn btn-glow"
                 style={{ justifyContent: "center", gap: 8 }}
                 onClick={() => setMenuOpen(false)}
               >
-                Dashboard
+                {t("nav.dashboard", l)}
                 <ExternalLink size={14} />
               </Link>
 
@@ -203,12 +212,12 @@ export default function Navbar({
                 className="btn btn-ghost"
                 style={{ justifyContent: "center", gap: 8 }}
               >
-                Logout
+                {t("common.signOut", l)}
               </button>
             </div>
           ) : (
             <Link
-              href="/login"
+              href={localizePath(locale, "/login")}
               className="btn btn-glow"
               style={{ marginTop: 8, justifyContent: "center", gap: 8 }}
               onClick={() => setMenuOpen(false)}

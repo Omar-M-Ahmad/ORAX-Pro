@@ -317,7 +317,15 @@
     "mar19": "Mar 19",
     "mar18": "Mar 18",
     "mar17": "Mar 17",
-    "mar16": "Mar 16"
+    "mar16": "Mar 16",
+    "cards": {
+      "activeSubscriptions": "Active subscriptions",
+      "showcaseProjects": "Showcase projects",
+      "usageEvents": "Usage events",
+      "recentSubscriptions": "Recent subscriptions",
+      "emptySubscriptions": "No subscriptions yet.",
+      "renewsSoon": "Renews soon"
+    }
   },
   "settings": {
     "heading": "Settings",
@@ -341,6 +349,7 @@
     "switchToAr": "Arabic (عربي)",
     "danger": "Danger Zone",
     "delete": "Delete Account",
+    "deleting": "Deleting...",
     "deleteDesc": "Permanently delete your account. This cannot be undone.",
     "deleteBtn": "Delete Account",
     "emailReadonly": "Email cannot be changed",
@@ -378,5 +387,10 @@
     "inactive": "Inactive",
     "planStarter": "Starter",
     "planFree": "Free"
+  },
+  "ui": {
+    "toggleMenu": "Toggle navigation menu",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
   }
 }

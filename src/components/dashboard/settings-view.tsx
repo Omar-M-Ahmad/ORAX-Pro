@@ -13,6 +13,8 @@ import TextArea from "@/components/ui/textarea";
 import Input from "@/components/ui/input";
 import { t } from "@/i18n";
 import type { SettingsPageData } from "@/modules/settings/server/get-settings-page-data";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 type SettingsViewProps = {
   data: SettingsPageData;
@@ -32,6 +34,8 @@ export default function SettingsView({
 
   const [saved, setSaved] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [name, setName] = useState(data.name);
   const [email] = useState(data.email);
@@ -73,6 +77,34 @@ export default function SettingsView({
       setError(t("auth.common.unexpectedError", l));
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  // Handel Delete Account
+  async function handleDeleteAccount(): Promise<void> {
+    setDeleteError("");
+    setIsDeleting(true);
+
+    try {
+      const response = await fetch("/api/user", {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setDeleteError(result?.error || t("auth.common.unexpectedError", l));
+        setIsDeleting(false);
+        return;
+      }
+
+      await signOut({
+        redirect: true,
+        callbackUrl: `/${locale}/login`,
+      });
+    } catch {
+      setDeleteError(t("auth.common.unexpectedError", l));
+      setIsDeleting(false);
     }
   }
 
@@ -341,25 +373,34 @@ export default function SettingsView({
 
             <button
               type="button"
-              onClick={() => setShowDeleteConfirm(true)}
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 8,
-                padding: "9px 18px",
-                borderRadius: 10,
-                border: "1px solid rgba(239,68,68,0.4)",
-                background: "rgba(239,68,68,0.1)",
-                color: "var(--red)",
+                padding: "8px 16px",
+                borderRadius: 8,
+                border: "none",
+                background: "var(--red)",
+                color: "#fff",
                 fontSize: 13,
                 fontWeight: 600,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
+                cursor: isDeleting ? "not-allowed" : "pointer",
+                opacity: isDeleting ? 0.7 : 1,
               }}
             >
               <Trash2 size={14} />
-              {t("settings.deleteBtn", l)}
+              {isDeleting
+                ? t("settings.deleting", l)
+                : t("settings.deleteConfirmBtn", l)}
             </button>
+
+            {deleteError ? (
+              <p style={{ fontSize: 13, color: "var(--red)", marginTop: 12 }}>
+                {deleteError}
+              </p>
+            ) : null}
           </div>
         ) : (
           <div
@@ -398,19 +439,33 @@ export default function SettingsView({
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: 10 }}>
+            <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(false)}
-                className="btn btn-ghost"
-                style={{ padding: "8px 16px", fontSize: 13 }}
+                disabled={isDeleting}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "8px 16px",
+                  borderRadius: 8,
+                  border: "1px solid var(--border)",
+                  background: "transparent",
+                  color: "var(--text-2)",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: isDeleting ? "not-allowed" : "pointer",
+                  opacity: isDeleting ? 0.7 : 1,
+                }}
               >
-                {t("settings.cancel", l)}
+                {t("settings.cancelDelete", l)}
               </button>
 
               <button
                 type="button"
-                onClick={() => setShowDeleteConfirm(false)}
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -422,13 +477,21 @@ export default function SettingsView({
                   color: "#fff",
                   fontSize: 13,
                   fontWeight: 600,
-                  cursor: "pointer",
+                  cursor: isDeleting ? "not-allowed" : "pointer",
+                  opacity: isDeleting ? 0.7 : 1,
                 }}
               >
                 <Trash2 size={14} />
-                {t("settings.deleteConfirmBtn", l)}
+                {isDeleting
+                  ? t("settings.deleting", l)
+                  : t("settings.deleteConfirmBtn", l)}
               </button>
             </div>
+            {deleteError ? (
+              <p style={{ fontSize: 13, color: "var(--red)", marginTop: 12 }}>
+                {deleteError}
+              </p>
+            ) : null}
           </div>
         )}
       </div>

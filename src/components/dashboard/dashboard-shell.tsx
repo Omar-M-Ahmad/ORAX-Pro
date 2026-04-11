@@ -25,6 +25,7 @@ import { useMemo, useState } from "react";
 import { useLocale } from "@/components/providers/locale-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { t } from "@/i18n";
+import { localizePath } from "@/i18n/localize-path";
 
 const navItems = [
   { key: "dashboard" as const, icon: LayoutDashboard, route: "/dashboard" },
@@ -50,9 +51,7 @@ export default function DashboardShell({
 
   const l = locale;
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const localizePath = (path: string) => `/${locale}${path}`;
-  const normalizedPathname =
-    pathname?.replace(/^\/(en|ar)(?=\/|$)/, "") || "/";
+  const normalizedPathname = pathname?.replace(/^\/(en|ar)(?=\/|$)/, "") || "/";
 
   const userInitial = useMemo(
     () => userName.charAt(0).toUpperCase(),
@@ -114,7 +113,7 @@ export default function DashboardShell({
           }}
         >
           <Link
-            href={localizePath("")}
+            href={localizePath(locale, "")}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -177,7 +176,7 @@ export default function DashboardShell({
             }}
           >
             {navItems.map(({ key, icon: Icon, route }) => {
-              const href = localizePath(route);
+              const href = localizePath(locale, route);
               const isActive =
                 normalizedPathname === route ||
                 normalizedPathname.startsWith(`${route}/`);

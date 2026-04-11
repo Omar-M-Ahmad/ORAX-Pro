@@ -5,6 +5,7 @@
 
 import type { Metadata } from "next";
 import DashboardView from "@/components/dashboard/dashboard-view";
+import { auth } from "@/lib/auth/config";
 import { getDashboardPageData } from "@/modules/dashboard/server/get-dashboard-page-data";
 
 export const metadata: Metadata = {
@@ -13,7 +14,12 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage(): Promise<React.JSX.Element> {
-  const data = await getDashboardPageData();
+  const session = await auth();
+
+  const data = await getDashboardPageData(
+    session?.user?.id,
+    session?.user?.name ?? undefined,
+  );
 
   return <DashboardView data={data} />;
 }

@@ -4,50 +4,63 @@
  */
 
 import { db } from "@/lib/db";
-import { subscriptions } from "@/lib/db/schema";
-import { siteConfig } from "@/config/site";
-import { desc, eq } from "drizzle-orm";
+import { subscriptions, users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 /** Type for the dashboard statistics response */
-export interface DashboardStats {
-  userCount: number;
-  subscriptionsCount: number;
-  revenue: number;
-  recent: {
-    customer: string;
+type DashboardStats = {
+  user: {
+    id: string;
+    name: string | null;
+    email: string | null;
+  } | null;
+  subscription: {
+    id: string;
     plan: string;
     status: string;
-    price: number;
-    createdAt: Date | null;
+    currentPeriodEnd: Date | null;
   }[];
-}
+  stats: {
+    activeSubscriptions: number;
+    showcaseProjects: number;
+    showcaseUsage: number;
+  };
+};
 
 /** Retrieve current user subscriptions and compute personal stats */
-export async function getDashboardStats(userId: string): Promise<DashboardStats> {
-  const subscriptionList = await db.query.subscriptions.findMany({
-    where: eq(subscriptions.userId, userId),
-    orderBy: [desc(subscriptions.createdAt)],
-  });
+export async function getDashboardStats(
+  userId: string,
+): Promise<DashboardStats> {
+  const [user] = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+    })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
 
-  const userCount = 1;
-  const subscriptionsCount = subscriptionList.length;
+  const subscription = await db
+    .select({
+      id: subscriptions.id,
+      plan: subscriptions.plan,
+      status: subscriptions.status,
+      currentPeriodEnd: subscriptions.currentPeriodEnd,
+    })
+    .from(subscriptions)
+    .where(eq(subscriptions.userId, userId));
 
-  const revenue = subscriptionList.reduce((total, sub) => {
-    const planPrice =
-      siteConfig.pricing[sub.plan as keyof typeof siteConfig.pricing] ?? 0;
-    return total + planPrice;
-  }, 0);
-  const recent = subscriptionList.slice(0, 5).map((sub) => {
-    const price =
-      siteConfig.pricing[sub.plan as keyof typeof siteConfig.pricing] ?? 0;
-    return {
-      customer: "You",
-      plan: sub.plan,
-      status: sub.status,
-      price,
-      createdAt: sub.createdAt ?? null,
-    };
-  });
+  const stats = {
+    activeSubscriptions: subscription.filter((sub) => sub.status === "active")
+      .length,
+    showcaseProjects: 3,
+    showcaseUsage: 12,
+  };
 
-  return { userCount, subscriptionsCount, revenue, recent };
+  return {
+    user,
+    subscription,
+    stats,
+  };
 }

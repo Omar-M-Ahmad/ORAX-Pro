@@ -3,39 +3,48 @@
  * @description Server data loader for dashboard page.
  */
 
-import { auth } from "@/lib/auth/config";
 import { getDashboardStats } from "@/modules/dashboard/server/get-dashboard-stats";
 
 export type DashboardPageData = {
   userName: string;
   stats: {
-    revenue: number;
-    users: number;
-    subscriptions: number;
+    activeSubscriptions: number;
+    showcaseProjects: number;
+    showcaseUsage: number;
   };
-  recent: {
-    customer: string;
+  subscription: {
+    id: string;
     plan: string;
     status: string;
-    price: number;
-    createdAt: Date | null;
+    currentPeriodEnd: Date | null;
   }[];
 };
 
-export async function getDashboardPageData(): Promise<DashboardPageData> {
-  const session = await auth();
-  const userId = session?.user?.id;
-  const stats = userId
-    ? await getDashboardStats(userId)
-    : { userCount: 0, subscriptionsCount: 0, revenue: 0, recent: [] };
+export async function getDashboardPageData(
+  userId: string | undefined,
+  userName: string | undefined,
+): Promise<DashboardPageData> {
+  if (!userId) {
+    return {
+      userName: userName?.trim() || "User",
+      stats: {
+        activeSubscriptions: 0,
+        showcaseProjects: 0,
+        showcaseUsage: 0,
+      },
+      subscription: [],
+    };
+  }
+
+  const dashboard = await getDashboardStats(userId);
 
   return {
-    userName: session?.user?.name?.trim() || "Account",
+    userName: dashboard.user?.name?.trim() || userName?.trim() || "User",
     stats: {
-      revenue: stats.revenue,
-      users: stats.userCount,
-      subscriptions: stats.subscriptionsCount,
+      activeSubscriptions: dashboard.stats.activeSubscriptions,
+      showcaseProjects: dashboard.stats.showcaseProjects,
+      showcaseUsage: dashboard.stats.showcaseUsage,
     },
-    recent: stats.recent,
+    subscription: dashboard.subscription,
   };
 }
